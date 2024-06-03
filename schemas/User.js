@@ -1,6 +1,6 @@
 let userInformation = {
-    required : ["firstName","lastName","userName", "email"],
-    authorized: ["firstName","lastName","userName", "email", "phone"],
+    required : ["firstName","lastName","username", "email"],
+    authorized: ["firstName","lastName","username", "email", "phone"],
     unique: ["userName"],
     elements :[]
 }

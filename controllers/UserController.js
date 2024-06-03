@@ -1,7 +1,11 @@
-const UserSchema = require('../schemas/User')
+const UserService = require('../services/UserService')
 
 // La fonction permet d'ajouter un utilisateur
 module.exports.addOneUser = function(req, res){
+    UserService.addOneUser(req.body, function(err, value){
+        res.send(value)
+
+    } )
 
 }
 

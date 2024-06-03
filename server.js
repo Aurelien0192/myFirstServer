@@ -6,6 +6,9 @@ const Config = require("./config")
 //Création de notre application express.js
 const app = express()
 
+//Déclaration des middlewares  à express
+app.use(bodyParser.json())
+
 //déclaration des controlleurs pour utilisateur
 const UserController = require("./controllers/UserController")
 
@@ -34,7 +37,7 @@ app.put('/user', UserController.updateOneUser)
 app.put('/user', UserController.udpateManyUsers)
 
 
-//démarrage de notre serveur le port choisi
+//démarrage de notre serveur sur le port choisi
 app.listen(Config.port, () => {
     console.log (`(INFO) ${new Date().toLocaleString()}: server start`)
 })
