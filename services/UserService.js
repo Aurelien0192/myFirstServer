@@ -48,7 +48,6 @@ module.exports.addManyUsers = function(users, callback) {
         checkSchemaUser(user, function (err, value) {
             if (err) {
                 err.index = i
-                console.log(err.index)
                 next(null, err)
             }else{
                 next(null, null)
@@ -70,11 +69,14 @@ module.exports.addManyUsers = function(users, callback) {
     })
 }
 
- 
-
 // La fonction permet de chercher un utilisateur.
-module.exports.findOneUser = function() {
-
+module.exports.findOneUser = function(id, callback) {
+    let user = _.find(UserSchema.elements, ["id", id])
+    if (user){
+        callback(null, user)
+    }else{
+        callback({error : true, msg : "Utilisateur not found", error_type : 'Not_Found'})
+    }
 }
 
 // La fonction permet de chercher plusieurs utilisateurs.
@@ -94,7 +96,7 @@ module.exports.deleteOneUser = function(id, callback) {
         return callback({error: 1, msg : "L'utilisateur à supprimer n'a pas été trouvé. (ID INVALID)"})
     }
     UserSchema.elements.splice(index,1)
-    return callback(null, {msg : "element supprimé"})
+    return callback(null, {msg : "element supprimé",newTab: UserSchema.elements})
     
 }
 
@@ -114,6 +116,9 @@ module.exports.deleteManyUsers = function(ids, callback) {
 // La fonction permet de modifier un utilisateur.
 module.exports.updateOneUser = function(id, user_edition, callback) {
     var user_index = _.findIndex(UserSchema.elements, ["id", id])
+    if (user_index < 0){
+        return callback({msg : `l'ID ${user_index}, n'a pas été trouvé`})
+    }
     var user_tmp = {... UserSchema.elements[user_index],...user_edition }
     checkSchemaUser(user_tmp, function(err, value) {
         if (err)
