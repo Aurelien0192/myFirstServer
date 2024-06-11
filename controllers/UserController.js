@@ -4,7 +4,6 @@ const UserService = require('../services/UserService')
 module.exports.addOneUser = function(req, res){
     UserService.addOneUser(req.body, function(err, value){
         res.send(value)
-
     } )
 
 }
