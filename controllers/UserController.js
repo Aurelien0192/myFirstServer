@@ -1,9 +1,9 @@
 const UserService = require('../services/UserService')
-const logger = require('../utils/logger')
+const LoggerHttp = require('../utils/logger').http
 
 // ajout d'un utilisateur
 module.exports.addOneUser = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("Création d'un utilisateur")
 UserService.addOneUser(req.body, function(err, value) {
         if(err && err.type_error == "no-found") {
@@ -21,7 +21,7 @@ UserService.addOneUser(req.body, function(err, value) {
 
 // ajout de plusieurs utilisateurs
 module.exports.addManyUsers = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("Ajout plusieurs utilisateurs")
     UserService.addManyUsers(req.body, function(err, value) {
         if(err) {
@@ -36,7 +36,7 @@ module.exports.addManyUsers = function (req,res){
 // recherche d'un utilisateur
 module.exports.findOneUser = function (req,res){
     UserService.findOneUser(req.params.userId, function(err, value) {
-        logger(req, res)
+        LoggerHttp(req, res)
         req.log.info("chercher un utilisateur")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
@@ -55,7 +55,7 @@ module.exports.findOneUser = function (req,res){
 }
 // recherche de plusieurs utilisateurs
 module.exports.findManyUsers = function (req, res) {
-    logger(req, res)
+    LoggerHttp(req, res)
         req.log.info("chercher plusieurs utilisateurs")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
@@ -81,7 +81,7 @@ module.exports.findManyUsers = function (req, res) {
 
 // suppression d'un utilisateur
 module.exports.deleteOneUser = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("supprimer un utilisateur")
     UserService.deleteOneUser(req.params.userId, function (err, value) {
         // console.log(err)
@@ -102,7 +102,7 @@ module.exports.deleteOneUser = function (req,res){
 }
 // suppression de plusieurs utilisateurs
 module.exports.deleteManyUsers = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("supprimer plusieurs utilisateurs")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
@@ -127,7 +127,7 @@ module.exports.deleteManyUsers = function (req,res){
 }
 // modification d'un utilisateur
 module.exports.updateOneUser = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("modifier un utilisateur")
     console.log(req.body)
     UserService.updateOneUser(req.params.userId, req.body, function (err, value) {
@@ -149,7 +149,7 @@ module.exports.updateOneUser = function (req,res){
 }
 // modification de plusieurs utilisateurs
 module.exports.updateManyUsers = function (req,res){
-    logger(req, res)
+    LoggerHttp(req, res)
     req.log.info("modifier plusieurs utilisateurs")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
