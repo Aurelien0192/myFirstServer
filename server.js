@@ -9,6 +9,8 @@ const app = express()
 //Déclaration des middlewares  à express
 app.use(bodyParser.json())
 
+require("./utils/database")
+
 //déclaration des controlleurs pour utilisateur
 const UserController = require("./controllers/UserController")
 
@@ -16,25 +18,25 @@ const UserController = require("./controllers/UserController")
 app.post('/user', UserController.addOneUser)
 
 //Création dun endpoint /user pour l'ajout de plusieurs utilisateurs
-app.post('/user', UserController.addManyUsers)
+app.post('/users', UserController.addManyUsers)
 
 //Création dun endpoint /user pour la recherche d'un utilisateur
-app.get('/user', UserController.findOneUser)
+app.get('/user/:id', UserController.findOneUser)
 
 //Création dun endpoint /user pour la recherche de plusieurs utilisateurs
-app.get('/user', UserController.findManyUsers)
+app.get('/users', UserController.findManyUsers)
 
 //Création dun endpoint /user pour la suppression d'un utilisateur
-app.delete('/user', UserController.deleteOneUser)
+app.delete('/user/:id', UserController.deleteOneUser)
 
 //Création dun endpoint /user pour la suppression de plusieurs utilisateurs
-app.delete('/user', UserController.deleteManyUsers)
+app.delete('/users', UserController.deleteManyUsers)
 
 //Création dun endpoint /user pour la modification d'un utilisateur
-app.put('/user', UserController.updateOneUser)
+app.put('/user/:id', UserController.updateOneUser)
 
 //Création dun endpoint /user pour la modification de plusieurs utilisateurs
-app.put('/user', UserController.udpateManyUsers)
+app.put('/users', UserController.updateManyUsers)
 
 
 //démarrage de notre serveur sur le port choisi
