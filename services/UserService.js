@@ -7,8 +7,8 @@ const ObjectId = mongoose.Types.ObjectId
 var User = mongoose.model('User', UserSchema)
 
 module.exports.addOneUser = function (user, callback) {
-    var new_user = new User(user)
-    var errors = new_user.validateSync()
+    const new_user = new User(user)
+    let errors = new_user.validateSync()
     if (errors) {
         errors = errors['errors']
         var text = Object.keys(errors).map((e) => {
