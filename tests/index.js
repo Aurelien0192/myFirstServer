@@ -1,7 +1,9 @@
 require("../utils/database")
-const chai = require("chai")
-const expect = chai.expect
 
 describe("UserService", () => {
-    require('./services/UserService')
+   require('./services/UserService')
+})
+
+describe("USerController", () => {
+    require('./controllers/UserController.test')
 })

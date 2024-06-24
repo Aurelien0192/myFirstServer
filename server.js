@@ -4,12 +4,12 @@ const bodyParser = require("body-parser")
 const Config = require("./config")
 const Logger = require("./utils/logger").pino
 const database = require("./middlewares/database")
+const loggerHttp = require("./middlewares/loggerHttp")
 
 //Création de notre application express.js
 const app = express()
 
 //Déclaration des middlewares  à express
-app.use(bodyParser.json())
 
 require("./utils/database")
 
@@ -17,6 +17,7 @@ require("./utils/database")
 const UserController = require("./controllers/UserController")
 const { config } = require("chai")
 
+app.use(bodyParser.json(), loggerHttp.addLogger)
 //Création dun endpoint /user pour l'ajout d'un utilisateur
 app.post('/user',database.controlsBDD,UserController.addOneUser)
 
@@ -47,3 +48,5 @@ app.listen(Config.port, () => {
     Logger.info(`Serveur démarré sur le port ${Config.port}.`)
     console.log (`(INFO) ${new Date().toLocaleString()}: server start`)
 })
+
+module.exports = app
