@@ -130,6 +130,45 @@ describe("POST - /users", () => {
 })
 
 describe("GET - /user", () => {
+    it("trouver un utilisateur via username correct - S", (done) => {
+        chai.request(server).get('/user').query({fields : ["username"], value:user[0].username}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver un utilisateur via email correct - S", (done) => {
+        chai.request(server).get('/user').query({fields : ["email"], value:user[0].email}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver un utilisateur via username correct et format fields incorrect - S", (done) => {
+        chai.request(server).get('/user').query({fields : "username", value:user[0].username}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver un utilisateur via username correct fields incorrect - E", (done) => {
+        chai.request(server).get('/user').query({fields : "lastName", value:user[0].username}).end((err, res) => {
+            res.should.has.status(405)
+            done()
+        })
+    })
+    it("trouver un utilisateur via username correct fields correct mais user inexistant - E", (done) => {
+        chai.request(server).get('/user').query({fields : ["username"], value:"turturututdfshiqergherqi"}).end((err, res) => {
+            res.should.has.status(404)
+            done()
+        })
+    })
+    it("trouver un utilisateur sans aucune query - E", (done) => {
+        chai.request(server).get('/user').end((err, res) => {
+            res.should.has.status(405)
+            done()
+        })
+    })
+})
+
+describe("GET - /user/:id", () => {
     it("trouver un utilisateur avec ID incorrect - E", (done) => {
         chai.request(server).get(`/user/66756baf835213e8d650c3ac`).end((err, res) => {
             res.should.has.status(404)

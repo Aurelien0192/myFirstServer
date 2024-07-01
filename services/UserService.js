@@ -100,7 +100,7 @@ module.exports.addManyUsers = async function (users, callback) {
     }
 };
 
-module.exports.findOneUser = function (user_id, callback) {
+module.exports.FindOneUserById = function (user_id, callback) {
     if (user_id && mongoose.isValidObjectId(user_id)) {
         User.findById(user_id).then((value) => {
             try {
@@ -121,7 +121,58 @@ module.exports.findOneUser = function (user_id, callback) {
     }
 }
 
-module.exports.findManyUsers = function (users_id, callback) {
+module.exports.findOneUser = function (tab_field, value, callback){
+    const field_unique = ["username", "email"]
+    if (tab_field && Array.isArray(tab_field) && value && _.filter(tab_field, (e) => { return field_unique.indexOf(e) === -1}).length === 0){
+        let obj_find= []
+        _.forEach(tab_field, (e) => {
+            obj_find.push({ [e] : value})
+        })
+        User.findOne({ $or : obj_find}).then((value) => {
+            if (value)
+                callback(null, value.toObject())
+            else{
+                callback({msg:"utilisateur non trouvé", type_error: "no-found"})
+            }
+        }).catch((err) => {
+            callback({msg:"Erreur interne mongo", type_error:"error-mongo"})
+        })
+    }else{
+        let msg = ""
+        if(!tab_field || !Array.isArray(tab_field)){
+            msg += "Les champs de recherche sont incorrecte"
+        }
+        if (_.filter(tab_field, (e) => {return field_unique.indexOf(e) === -1}).length>0){
+            const field_not_authorized = _.filter(tab_field, (e) => {return field_unique.indexOf(e) === -1})
+            msg += msg ? `Et (${field_not_authorized.join (',')}) ne sont pas des champs autorisés.`:
+            `Les champs (${field_not_authorized.join(',')}) ne sont pas des champs de recherche autorisé`
+            callback({msg : msg, type_error: "no-valid", field_not_authorized : field_not_authorized})
+        }else{
+            callback({msg: msg, type_error:"no-valid"})
+        }
+    }
+}
+
+module.exports.findManyUser = function (tab_field, value, callback){
+    const field_unique = ["username", "email"]
+    if (tab_field && Array.isArray(tab_field) && value && _.filter(tab_field, (e) => { return field_unique.indexOf(e) === -1}).length === 0){
+        let obj_find= []
+        _.forEach(tab_field, (e) => {
+            obj_find.push({ [e] : value})
+        })
+        User.find({obj_find}).then((value) => {
+            if (value)
+                callback(null, value.toObject())
+            else{
+                callback({msg:"utilisateur non trouvé", type_error: "no-found"})
+            }
+        }).catch((err) => {
+            callback({msg:"Erreur interne mongo", type_error:"error-mongo"})
+        })
+    }
+}
+
+module.exports.findManyUsersById = function (users_id, callback) {
     if (users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == users_id.length) {
         users_id = users_id.map((e) => { return new ObjectId(e) })
         User.find({ _id: users_id }).then((value) => {

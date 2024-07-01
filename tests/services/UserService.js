@@ -10,9 +10,10 @@ var user_no_valid = {
             username: "edupont"
         }
 
+let users = []
 
 describe("addOneUser", () => {
-    it("Utilisateur correct. - S", () => {
+    it("Utilisateur correct. - S", (done) => {
         var user = {
             firstName: "Edouard",
             lastName: "Dupont",
@@ -21,14 +22,13 @@ describe("addOneUser", () => {
         }
         UserService.addOneUser(user, function (err, value) {
             expect(value).to.be.a('object');
-        UserService.addOneUser(user, function (err, value) {
-            expect(value).to.be.a('object');
             expect(value).to.haveOwnProperty('_id')
             id_user_valid = value._id
-            //console.log(value)
-        }) 
+            users.push(value)
+            //console.log(value) 
             id_user_valid = value._id
             //console.log(value)
+            done()
         }) 
     })
     it("Utilisateur incorrect. (Sans firstName) - E", () => {
@@ -54,7 +54,6 @@ describe("addOneUser", () => {
 })
 
 describe("addManyUsers", () => {
-
     it("Utilisateurs à ajouter, non valide. - E", (done) => {
         var users_tab_error = [{
             firstName: "Edouard",
@@ -110,24 +109,25 @@ describe("addManyUsers", () => {
  
         UserService.addManyUsers(users_tab, function(err, value) {
            tab_id_users = _.map(value, '_id')
+           users = [...value,...users]
            expect(value).lengthOf(3)
             done()
         })
     })
 })
 
-describe("findOneUser", () => {
+describe("FindOneUserById", () => {
     it("Chercher un utilisateur existant correct. - S", (done) => {
-        UserService.findOneUser(id_user_valid, function (err, value) {
+        UserService.FindOneUserById(id_user_valid, function (err, value) {
             expect(value).to.be.a('object');
-             expect(value).to.haveOwnProperty('_id')
+            expect(value).to.haveOwnProperty('_id')
             expect(value).to.haveOwnProperty('lastName') 
             done()
           
         })
     })
     it("Chercher un utilisateur non-existant correct. - E", (done) => {
-        UserService.findOneUser("100", function (err, value) {
+        UserService.FindOneUserById("100", function (err, value) {
             expect(err).to.haveOwnProperty('msg')
             expect(err).to.haveOwnProperty('type_error')
             expect(err["type_error"]).to.equal('no-valid')
@@ -136,9 +136,63 @@ describe("findOneUser", () => {
     })
 })
 
-describe("findManyUsers", () => {
+describe("findOneUser", () => {
+    it ("Chercher un utilisateur existant correct via username -S", (done) => {
+        UserService.findOneUser(["username"],users[3].username,function (err,value){
+            expect(value).to.be.a("object")
+            expect(value).to.haveOwnProperty("username")
+            expect(value["username"]).to.equal(users[3].username)
+            expect(err).to.be.null
+           done()
+        })
+    })
+    it ("Chercher un utilisateur existant correct via email -S", (done) => {
+        UserService.findOneUser(["email"],users[3].email,function (err,value){
+            expect(value).to.be.a("object")
+            expect(value).to.haveOwnProperty("email")
+            expect(value["email"]).to.equal(users[3].email)
+            expect(err).to.be.null
+            done()
+        })
+    })
+    it ("Chercher un utilisateur existant correct via email et username -S", (done) => {
+        UserService.findOneUser(["username","email"],"edupont",function (err,value){
+            expect(value).to.be.a("object")
+            expect(value).to.haveOwnProperty("username")
+            expect(value["username"]).to.include("dupont")
+            expect(err).to.be.null
+            done()
+        })
+    })
+    it ("Chercher un utilisateur avec un champ non autorisé - E", (done) => {
+        UserService.findOneUser(["email", "firstName"],users[0].username, function (err, value){
+            expect(err).to.haveOwnProperty("type_error")
+            expect(err["type_error"]).to.equal("no-valid")
+            expect(value).to.be.undefined
+            done()
+        })
+    })
+    it ("Chercher un utilisateur sans talbeau de champs - E", (done) => {
+        UserService.findOneUser("email",users[0].username, function (err, value){
+            expect(err).to.haveOwnProperty("type_error")
+            expect(err["type_error"]).to.equal("no-valid")
+            expect(value).to.be.undefined
+            done()
+        })
+    })
+    it ("Chercher un utilisateur inexistant - E", (done) => {
+        UserService.findOneUser(["email"],"users[0].username", function (err, value){
+            expect(err).to.haveOwnProperty("type_error")
+            expect(err["type_error"]).to.equal("no-found")
+            expect(value).to.be.undefined
+            done()
+        })
+    })
+})
+
+describe("findManyUsersById", () => {
     it("Chercher des utilisateurs existant correct. - S", (done) => {
-        UserService.findManyUsers(tab_id_users, function (err, value) {
+        UserService.findManyUsersById(tab_id_users, function (err, value) {
             expect(value).lengthOf(3)
             done()
         })

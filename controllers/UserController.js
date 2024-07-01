@@ -41,10 +41,40 @@ module.exports.addManyUsers = function (req,res){
         }
     })
 }
+
+module.exports.FindOneUser = function (req, res) {
+    let fields = req.query.fields
+    if (fields && !Array.isArray(fields)){
+        fields = [fields]
+    }
+    console.log(req.query.value)
+    UserService.findOneUser(fields, req.query.value, function(err, value) {
+        req.log.info("chercher un utilisateur par un champs")
+        if (err && err.type_error === "no-found"){
+            res.statusCode = 404
+            res.send(err)
+        }
+        else if (err && err.type_error === "no-valid"){
+            res.statusCode = 405
+            res.send(err)
+        }
+        else if (err && err.type_error === "no-valid"){
+            res.statusCode = 405
+            res.send(err)
+        }else if(err && err.type_error == "error-mongo") {
+            res.statusCode = 500
+            res.send(err)
+        }else {
+            res.statusCode = 200
+            res.send(value)
+        }
+    })
+}
+
 // recherche d'un utilisateur
-module.exports.findOneUser = function (req,res){
-    UserService.findOneUser(req.params.id, function(err, value) { 
-        req.log.info("chercher un utilisateur")
+module.exports.FindOneUserById = function (req,res){
+    UserService.FindOneUserById(req.params.id, function(err, value) { 
+        req.log.info("chercher un utilisateur par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
             res.send(err)
@@ -61,13 +91,13 @@ module.exports.findOneUser = function (req,res){
     })
 }
 // recherche de plusieurs utilisateurs
-module.exports.findManyUsers = function (req, res) {
+module.exports.findManyUsersById = function (req, res) {
     req.log.info("chercher plusieurs utilisateurs")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.findManyUsers(arg, function (err, value) {
+    UserService.findManyUsersById(arg, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);

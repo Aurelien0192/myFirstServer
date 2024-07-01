@@ -19,16 +19,20 @@ const { config } = require("chai")
 
 app.use(bodyParser.json(), loggerHttp.addLogger)
 //Création dun endpoint /user pour l'ajout d'un utilisateur
+
 app.post('/user',database.controlsBDD,UserController.addOneUser)
 
 //Création dun endpoint /user pour l'ajout de plusieurs utilisateurs
 app.post('/users',database.controlsBDD, UserController.addManyUsers)
 
-//Création dun endpoint /user pour la recherche d'un utilisateur
-app.get('/user/:id',database.controlsBDD, UserController.findOneUser)
+//Création d'un endpoint /user pour la recherche d'un utilisateur par email ou username
+app.get('/user',database.controlsBDD,UserController.FindOneUser)
 
-//Création dun endpoint /user pour la recherche de plusieurs utilisateurs
-app.get('/users',database.controlsBDD, UserController.findManyUsers)
+//Création dun endpoint /user pour la recherche d'un utilisateur par id
+app.get('/user/:id',database.controlsBDD, UserController.FindOneUserById)
+
+//Création dun endpoint /users pour la recherche de plusieurs utilisateurs
+app.get('/users',database.controlsBDD, UserController.findManyUsersById)
 
 //Création dun endpoint /user pour la suppression d'un utilisateur
 app.delete('/user/:id',database.controlsBDD, UserController.deleteOneUser)
