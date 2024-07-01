@@ -153,21 +153,27 @@ module.exports.findOneUser = function (tab_field, value, callback){
     }
 }
 
-module.exports.findManyUser = function (tab_field, value, callback){
-    const field_unique = ["username", "email"]
-    if (tab_field && Array.isArray(tab_field) && value && _.filter(tab_field, (e) => { return field_unique.indexOf(e) === -1}).length === 0){
-        let obj_find= []
-        _.forEach(tab_field, (e) => {
-            obj_find.push({ [e] : value})
-        })
-        User.find({obj_find}).then((value) => {
-            if (value)
-                callback(null, value.toObject())
-            else{
-                callback({msg:"utilisateur non trouvé", type_error: "no-found"})
+module.exports.findManyUsers = function (page, limit, callback) {
+    page = !page ? 1 : page
+    limit = !limit ? 1 : limit
+    if (typeof page !== "number" || typeof limit !== "number"){
+        callback ({msg: `format de ${typeof page !== "number" ? "page" : "limit"} est incorrect`, type_error:"no-valid"})
+    }else{
+        User.countDocuments().then((value) => {
+            if (value > 0){
+
+                const skip = ((page-1) * limit)
+                User.find({}, null, {skip:skip, limit:limit}).then((results) => {
+                    callback (null, {
+                        count : value,
+                        results : results
+                    })
+                })
+            }else{
+                callback(null, {count : 0,results : [] })
             }
-        }).catch((err) => {
-            callback({msg:"Erreur interne mongo", type_error:"error-mongo"})
+        }).catch((e) => {
+           callback (e) 
         })
     }
 }

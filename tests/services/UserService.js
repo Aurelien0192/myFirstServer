@@ -53,7 +53,9 @@ describe("addOneUser", () => {
     })
 })
 
-describe("addManyUsers", () => {
+
+
+describe("addManyUsersById", () => {
     it("Utilisateurs à ajouter, non valide. - E", (done) => {
         var users_tab_error = [{
             firstName: "Edouard",
@@ -185,6 +187,27 @@ describe("findOneUser", () => {
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.equal("no-found")
             expect(value).to.be.undefined
+            done()
+        })
+    })
+})
+
+describe("findManyUsers", () => {
+    it("Retourne 3 utilisateurs sur les 7 -S", (done) => {
+        UserService.findManyUsers(1,3, function (err, value){
+            expect(value).to.haveOwnProperty("count")
+            expect(value).to.haveOwnProperty("results")
+            expect(value["count"]).to.be.equal(7)
+            expect(value["results"]).lengthOf(3)
+            expect(err).to.be.null
+            done()
+        })
+    })
+    it("envoie chaine de caractère sur page - E", (done) => {
+        UserService.findManyUsers("coucou", 3, function(err, value){
+            expect(err).to.haveOwnProperty("type_error")
+            expect(err["type_error"]).to.be.equal("no-valid")
+            expect(value).to.undefined
             done()
         })
     })
