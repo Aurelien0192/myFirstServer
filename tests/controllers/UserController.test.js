@@ -79,16 +79,16 @@ describe("POST - /users", () => {
             done()
         })
     })
-    it("Ajouter des utilisateurs avec chanmps duplicate - E", (done) => {
+    it("Ajouter des utilisateurs avec champs duplicate - E", (done) => {
         chai.request(server).post('/users').send([{
             firstName : "Mathis",
             lastName : "Boisson",
-            username : "footdu21",
+            username : "drfeeezfsqo5",
             email: "fekofze"
         },{
             firstName : "dracaufeu",
             lastName : "Till",
-            username : "baleck",
+            username : "drfeeezfsqo5",
             email : "poketruffe@gmail.com"
         }]).end((err,res) => {
             res.should.have.status(405)
@@ -184,6 +184,33 @@ describe("GET - /user/:id", () => {
     it("trouver un utilisateur correct - S", (done) => {
         chai.request(server).get(`/user/${user[0]._id}`).end((err, res) => {
             res.should.has.status(200)
+            done()
+        })
+    })
+})
+
+describe("GET - /users_by_filter", () => {
+    it("trouver les utilisateurs avec query correct - S", (done) => {
+        chai.request(server).get('/users_by_filter').query({page:1,limit:3}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver les utilisateurs de la page 3 -S ", (done) => {
+        chai.request(server).get('/users_by_filter').query({page:3,limit:3}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver les utilisateurs avec page manquant -S", (done) => {
+        chai.request(server).get('/users_by_filter').query({limit:3}).end((err, res) => {
+            res.should.has.status(200)
+            done()
+        })
+    })
+    it("trouver les utilisateurs avec limit chaine de caractère -E", (done) => {
+        chai.request(server).get('/users_by_filter').query({page:"coucou", limit:3}).end((err, res) => {
+            res.should.has.status(405)
             done()
         })
     })

@@ -31,6 +31,8 @@ app.get('/user',database.controlsBDD,UserController.FindOneUser)
 //Création dun endpoint /user pour la recherche d'un utilisateur par id
 app.get('/user/:id',database.controlsBDD, UserController.FindOneUserById)
 
+app.get('/users_by_filter',database.controlsBDD, UserController.findManyUsers)
+
 //Création dun endpoint /users pour la recherche de plusieurs utilisateurs
 app.get('/users',database.controlsBDD, UserController.findManyUsersById)
 

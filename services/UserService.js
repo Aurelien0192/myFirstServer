@@ -156,12 +156,13 @@ module.exports.findOneUser = function (tab_field, value, callback){
 module.exports.findManyUsers = function (page, limit, callback) {
     page = !page ? 1 : page
     limit = !limit ? 1 : limit
-    if (typeof page !== "number" || typeof limit !== "number"){
-        callback ({msg: `format de ${typeof page !== "number" ? "page" : "limit"} est incorrect`, type_error:"no-valid"})
+    page = !Number.isNaN(page) ? Number(page): page
+    limit = !Number.isNaN(limit) ? Number(limit) :limit
+    if (Number.isNaN(page) || Number.isNaN(limit)){
+        callback ({msg: `format de ${Number.isNaN(page) ? "page" : "limit"} est incorrect`, type_error:"no-valid"})
     }else{
         User.countDocuments().then((value) => {
             if (value > 0){
-
                 const skip = ((page-1) * limit)
                 User.find({}, null, {skip:skip, limit:limit}).then((results) => {
                     callback (null, {
@@ -170,9 +171,10 @@ module.exports.findManyUsers = function (page, limit, callback) {
                     })
                 })
             }else{
-                callback(null, {count : 0,results : [] })
+                callback(null, {count : 0, results : [] })
             }
         }).catch((e) => {
+            console.log("ok")
            callback (e) 
         })
     }

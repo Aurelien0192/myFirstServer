@@ -90,6 +90,20 @@ module.exports.FindOneUserById = function (req,res){
         }
     })
 }
+
+module.exports.findManyUsers = function (req,res){
+    
+    UserService.findManyUsers(req.query.page, req.query.limit, function(err, value){
+        req.log.info("chercher tous les utilisateurs avec limit")
+        if(err && err.type_error == "no-valid"){
+            res.statusCode = 405
+            res.send(err)
+        }else{
+            res.statusCode = 200
+            res.send(value)
+        }
+    })
+}
 // recherche de plusieurs utilisateurs
 module.exports.findManyUsersById = function (req, res) {
     req.log.info("chercher plusieurs utilisateurs")

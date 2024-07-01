@@ -193,11 +193,11 @@ describe("findOneUser", () => {
 })
 
 describe("findManyUsers", () => {
-    it("Retourne 3 utilisateurs sur les 7 -S", (done) => {
+    it("Retourne 3 utilisateurs sur les 5 -S", (done) => {
         UserService.findManyUsers(1,3, function (err, value){
             expect(value).to.haveOwnProperty("count")
             expect(value).to.haveOwnProperty("results")
-            expect(value["count"]).to.be.equal(7)
+            expect(value["count"]).to.be.equal(5)
             expect(value["results"]).lengthOf(3)
             expect(err).to.be.null
             done()
@@ -205,6 +205,7 @@ describe("findManyUsers", () => {
     })
     it("envoie chaine de caractère sur page - E", (done) => {
         UserService.findManyUsers("coucou", 3, function(err, value){
+            console.log(err)
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.be.equal("no-valid")
             expect(value).to.undefined
