@@ -8,4 +8,4 @@ mongoose.connection.on('reconnected', () =>  Logger.info('Reconnecté à la base
 mongoose.connection.on('disconnecting', () => Logger.error('Déconnection de la base de données'));
 mongoose.connection.on('close', () =>  Logger.info('Connection à la base de donnée fermée'));
 
-mongoose.connect('mongodb://localhost:27017/CDA_SERVER_TRAINING')
+mongoose.connect(`mongodb://localhost:27017/${process.env.npm_lifecycle_event == 'test' ?"CDA_SERVER_TRAINING":"CDA_SERVER_PRODUCTION"}`)

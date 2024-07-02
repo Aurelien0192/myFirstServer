@@ -52,7 +52,6 @@ app.put('/users',database.controlsBDD, UserController.updateManyUsers)
 //démarrage de notre serveur sur le port choisi
 app.listen(Config.port, () => {
     Logger.info(`Serveur démarré sur le port ${Config.port}.`)
-    console.log (`(INFO) ${new Date().toLocaleString()}: server start`)
 })
 
 module.exports = app

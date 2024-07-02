@@ -1,8 +1,7 @@
 const chai = require('chai')
 const chaiHttp = require('chai-http')
-const { first } = require('lodash')
-let expect = chai.expect
-let should = chai.should()
+const should = chai.should()
+const expect = chai.expect
 const server = require("./../../server")
 const _ = require("lodash")
 
@@ -30,7 +29,7 @@ describe("POST - /user", () => {
         chai.request(server).post('/user').send({
             firstName : "kiwi",
             lastName : "tit",
-            username : "Ninin",
+            username : "domdom6",
             email : "gegeo@zeklfjzoe.com"
         }).end((err,res) => {
             res.should.have.status(405)
@@ -193,18 +192,24 @@ describe("GET - /users_by_filter", () => {
     it("trouver les utilisateurs avec query correct - S", (done) => {
         chai.request(server).get('/users_by_filter').query({page:1,limit:3}).end((err, res) => {
             res.should.has.status(200)
+            expect(res.body.results).to.be.an('array')
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })
     it("trouver les utilisateurs de la page 3 -S ", (done) => {
         chai.request(server).get('/users_by_filter').query({page:3,limit:3}).end((err, res) => {
             res.should.has.status(200)
+            expect(res.body.results).to.be.an('array')
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })
     it("trouver les utilisateurs avec page manquant -S", (done) => {
         chai.request(server).get('/users_by_filter').query({limit:3}).end((err, res) => {
             res.should.has.status(200)
+            expect(res.body.results).to.be.an('array')
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })

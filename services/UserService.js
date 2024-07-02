@@ -111,7 +111,7 @@ module.exports.FindOneUserById = function (user_id, callback) {
                 }
             }
             catch (e) {
-                console.log(e)
+                
             }
         }).catch((err) => {
             callback({ msg: "Impossible de chercher l'élément.", type_error: "error-mongo" });
@@ -174,7 +174,7 @@ module.exports.findManyUsers = function (page, limit, callback) {
                 callback(null, {count : 0, results : [] })
             }
         }).catch((e) => {
-            console.log("ok")
+            
            callback (e) 
         })
     }
@@ -192,7 +192,7 @@ module.exports.findManyUsersById = function (users_id, callback) {
                 }
             }
             catch (e) {
-                console.log(e)
+                
             }
         }).catch((err) => {
             callback({ msg: "Impossible de chercher l'élément.", type_error: "error-mongo" });
@@ -301,7 +301,7 @@ module.exports.updateManyUsers = function (users_id, update, callback) {0
     }else if (users_id && Array.isArray(users_id) && users_id.length >  0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length != users_id.length) {
         callback({ msg: "Tableau non conforme plusieurs éléments ne sont pas des ObjectId.", type_error: 'no-valid', fields: users_id.filter((e) => { return !mongoose.isValidObjectId(e)}) });
     }else{
-        console.log('ok')
+        
         callback({ msg: "Le body doit etre un objet.", type_error: 'no-valid' })
     }
 }
@@ -317,7 +317,7 @@ module.exports.deleteOneUser = function (user_id, callback) {
                 callback({ msg: "Utilisateur non trouvé.", type_error: "no-found" });
             }
             catch (e) {
-                console.log(e)
+                
                 callback(e)
             }
         }).catch((e) => {

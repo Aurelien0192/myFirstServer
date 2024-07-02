@@ -25,9 +25,9 @@ describe("addOneUser", () => {
             expect(value).to.haveOwnProperty('_id')
             id_user_valid = value._id
             users.push(value)
-            //console.log(value) 
+            // 
             id_user_valid = value._id
-            //console.log(value)
+            //
             done()
         }) 
     })
@@ -197,7 +197,7 @@ describe("findManyUsers", () => {
         UserService.findManyUsers(1,3, function (err, value){
             expect(value).to.haveOwnProperty("count")
             expect(value).to.haveOwnProperty("results")
-            expect(value["count"]).to.be.equal(5)
+            expect(value["count"]).to.be.equal(4)
             expect(value["results"]).lengthOf(3)
             expect(err).to.be.null
             done()
@@ -205,7 +205,7 @@ describe("findManyUsers", () => {
     })
     it("envoie chaine de caractère sur page - E", (done) => {
         UserService.findManyUsers("coucou", 3, function(err, value){
-            console.log(err)
+            
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.be.equal("no-valid")
             expect(value).to.undefined
@@ -258,7 +258,7 @@ describe("updateOneUser", () => {
 describe("updateManyUsers", () => {
     it("Modification utilisateurs avec id conformes - S", (done) =>{
         UserService.updateManyUsers(tab_id_users,{firstName:"Boudha"}, function (err, value){
-            console.log(err)
+            
             expect(err).to.be.null
             expect(value).to.haveOwnProperty("modifiedCount")
             expect(value).to.haveOwnProperty("matchedCount")

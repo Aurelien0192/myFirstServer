@@ -47,7 +47,7 @@ module.exports.FindOneUser = function (req, res) {
     if (fields && !Array.isArray(fields)){
         fields = [fields]
     }
-    console.log(req.query.value)
+    
     UserService.findOneUser(fields, req.query.value, function(err, value) {
         req.log.info("chercher un utilisateur par un champs")
         if (err && err.type_error === "no-found"){
@@ -98,7 +98,11 @@ module.exports.findManyUsers = function (req,res){
         if(err && err.type_error == "no-valid"){
             res.statusCode = 405
             res.send(err)
-        }else{
+        }else if(err && err.type_error == "error-mongo"){
+            res.statusCode = 500
+            res.send(err)
+        }
+        else{
             res.statusCode = 200
             res.send(value)
         }
