@@ -15,6 +15,7 @@ require("./utils/database")
 
 //déclaration des controlleurs pour utilisateur
 const UserController = require("./controllers/UserController")
+const ArticleController = require("./controllers/ArticleController")
 const { config } = require("chai")
 
 app.use(bodyParser.json(), loggerHttp.addLogger)
@@ -47,6 +48,36 @@ app.put('/user/:id',database.controlsBDD, UserController.updateOneUser)
 
 //Création dun endpoint /user pour la modification de plusieurs utilisateurs
 app.put('/users',database.controlsBDD, UserController.updateManyUsers)
+
+
+
+app.post('/article',database.controlsBDD,ArticleController.addOneArticle)
+
+//Création dun endpoint /article pour l'ajout de plusieurs articles
+app.post('/articles',database.controlsBDD, ArticleController.addManyArticles)
+
+//Création d'un endpoint /article pour la recherche d'un article par name
+app.get('/article',database.controlsBDD,ArticleController.FindOneArticle)
+
+//Création dun endpoint /article pour la recherche d'un article par id
+app.get('/article/:id',database.controlsBDD, ArticleController.FindOneArticleById)
+
+app.get('/articles_by_filter',database.controlsBDD, ArticleController.findManyArticles)
+
+//Création dun endpoint /articles pour la recherche de plusieurs articles
+app.get('/articles',database.controlsBDD, ArticleController.findManyArticlesById)
+
+//Création dun endpoint /article pour la suppression d'un article
+app.delete('/article/:id',database.controlsBDD, ArticleController.deleteOneArticle)
+
+//Création dun endpoint /articles pour la suppression de plusieurs articles
+app.delete('/articles',database.controlsBDD, ArticleController.deleteManyArticles)
+
+//Création dun endpoint /article pour la modification d'un article
+app.put('/article/:id',database.controlsBDD, ArticleController.updateOneArticle)
+
+//Création dun endpoint /articles pour la modification de plusieurs articles
+app.put('/articles',database.controlsBDD, ArticleController.updateManyArticles)
 
 
 //démarrage de notre serveur sur le port choisi

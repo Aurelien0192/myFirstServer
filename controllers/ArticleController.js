@@ -1,11 +1,11 @@
-const UserService = require('../services/UserService')
+const ArticleService = require('../services/ArticleService')
 
 
-// ajout d'un utilisateur
-module.exports.addOneUser = function (req,res){
+// ajout d'un article
+module.exports.addOneArticle = function (req,res){
     
-    req.log.info("Création d'un utilisateur")
-UserService.addOneUser(req.body, function(err, value) {
+    req.log.info("Création d'un article")
+ArticleService.addOneArticle(req.body, function(err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
             res.send(err)
@@ -22,10 +22,10 @@ UserService.addOneUser(req.body, function(err, value) {
     })
 }
 
-// ajout de plusieurs utilisateurs
-module.exports.addManyUsers = function (req,res){
-    req.log.info("Ajout plusieurs utilisateurs")
-    UserService.addManyUsers(req.body, function(err, value) {
+// ajout de plusieurs articles
+module.exports.addManyArticles = function (req,res){
+    req.log.info("Ajout plusieurs articles")
+    ArticleService.addManyArticles(req.body, function(err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404
             res.send(err)
@@ -42,14 +42,14 @@ module.exports.addManyUsers = function (req,res){
     })
 }
 
-module.exports.FindOneUser = function (req, res) {
+module.exports.FindOneArticle = function (req, res) {
     let fields = req.query.fields
     if (fields && !Array.isArray(fields)){
         fields = [fields]
     }
     
-    UserService.findOneUser(fields, req.query.value, function(err, value) {
-        req.log.info("chercher un utilisateur par un champs")
+    ArticleService.findOneArticle(fields, req.query.value, function(err, value) {
+        req.log.info("chercher un article par un champs")
         if (err && err.type_error === "no-found"){
             res.statusCode = 404
             res.send(err)
@@ -71,10 +71,10 @@ module.exports.FindOneUser = function (req, res) {
     })
 }
 
-// recherche d'un utilisateur
-module.exports.FindOneUserById = function (req,res){
-    UserService.FindOneUserById(req.params.id, function(err, value) { 
-        req.log.info("chercher un utilisateur par id")
+// recherche d'un article
+module.exports.FindOneArticleById = function (req,res){
+    ArticleService.FindOneArticleById(req.params.id, function(err, value) { 
+        req.log.info("chercher un article par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
             res.send(err)
@@ -91,10 +91,10 @@ module.exports.FindOneUserById = function (req,res){
     })
 }
 
-module.exports.findManyUsers = function (req,res){
+module.exports.findManyArticles = function (req,res){
     
-    UserService.findManyUsers(req.query.page, req.query.limit, req.query.q, function(err, value){
-        req.log.info("chercher tous les utilisateurs avec limit")
+    ArticleService.findManyArticles(req.query.q,req.query.page, req.query.limit,function(err, value){
+        req.log.info("chercher tous les articles avec limit")
         if(err && err.type_error == "no-valid"){
             res.statusCode = 405
             res.send(err)
@@ -108,14 +108,14 @@ module.exports.findManyUsers = function (req,res){
         }
     })
 }
-// recherche de plusieurs utilisateurs
-module.exports.findManyUsersById = function (req, res) {
-    req.log.info("chercher plusieurs utilisateurs")
+// recherche de plusieurs articles
+module.exports.findManyArticlesById = function (req, res) {
+    req.log.info("chercher plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.findManyUsersById(arg, function (err, value) {
+    ArticleService.findManyArticlesById(arg, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -135,10 +135,10 @@ module.exports.findManyUsersById = function (req, res) {
     });
   };
 
-// suppression d'un utilisateur
-module.exports.deleteOneUser = function (req,res){
-    req.log.info("supprimer un utilisateur")
-    UserService.deleteOneUser(req.params.id, function (err, value) {
+// suppression d'un article
+module.exports.deleteOneArticle = function (req,res){
+    req.log.info("supprimer un article")
+    ArticleService.deleteOneArticle(req.params.id, function (err, value) {
         if(err && err.type_error === "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -154,14 +154,14 @@ module.exports.deleteOneUser = function (req,res){
         }
     });
 }
-// suppression de plusieurs utilisateurs
-module.exports.deleteManyUsers = function (req,res){
-    req.log.info("supprimer plusieurs utilisateurs")
+// suppression de plusieurs articles
+module.exports.deleteManyArticles = function (req,res){
+    req.log.info("supprimer plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.deleteManyUsers(arg, function (err, value) {
+    ArticleService.deleteManyArticles(arg, function (err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404;
             res.send(err);
@@ -177,10 +177,10 @@ module.exports.deleteManyUsers = function (req,res){
         }
     });
 }
-// modification d'un utilisateur
-module.exports.updateOneUser = function (req,res){
-    req.log.info("modifier un utilisateur")
-    UserService.updateOneUser(req.params.id, req.body, function (err, value) {
+// modification d'un article
+module.exports.updateOneArticle = function (req,res){
+    req.log.info("modifier un article")
+    ArticleService.updateOneArticle(req.params.id, req.body, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -199,15 +199,15 @@ module.exports.updateOneUser = function (req,res){
         }
     });
 }
-// modification de plusieurs utilisateurs
-module.exports.updateManyUsers = function (req,res){
-    req.log.info("modifier plusieurs utilisateurs")
+// modification de plusieurs articles
+module.exports.updateManyArticles = function (req,res){
+    req.log.info("modifier plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
     var updateData = req.body
-    UserService.updateManyUsers(arg, updateData, function (err, value) {
+    ArticleService.updateManyArticles(arg, updateData, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
