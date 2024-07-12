@@ -5,6 +5,11 @@ const ArticleSchema = mongoose.Schema({
         type: String,
         required : true
     },
+    user_id: {
+        immutable: true,
+        type:mongoose.Types.ObjectId,
+        required: true
+    },
     description: {
         type: String,
         required : true

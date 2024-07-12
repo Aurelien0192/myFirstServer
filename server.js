@@ -16,6 +16,7 @@ require("./utils/database")
 //déclaration des controlleurs pour utilisateur
 const UserController = require("./controllers/UserController")
 const ArticleController = require("./controllers/ArticleController")
+const controleIdUser = require("./middlewares/controleExistingUser").ControleIdUser
 const { config } = require("chai")
 
 app.use(bodyParser.json(), loggerHttp.addLogger)
@@ -24,7 +25,7 @@ app.use(bodyParser.json(), loggerHttp.addLogger)
 app.post('/user',database.controlsBDD,UserController.addOneUser)
 
 //Création dun endpoint /user pour l'ajout de plusieurs utilisateurs
-app.post('/users',database.controlsBDD, UserController.addManyUsers)
+app.post('/users',database.controlsBDD,UserController.addManyUsers)
 
 //Création d'un endpoint /user pour la recherche d'un utilisateur par email ou username
 app.get('/user',database.controlsBDD,UserController.FindOneUser)
@@ -51,10 +52,10 @@ app.put('/users',database.controlsBDD, UserController.updateManyUsers)
 
 
 
-app.post('/article',database.controlsBDD,ArticleController.addOneArticle)
+app.post('/article',database.controlsBDD,controleIdUser,ArticleController.addOneArticle)
 
 //Création dun endpoint /article pour l'ajout de plusieurs articles
-app.post('/articles',database.controlsBDD, ArticleController.addManyArticles)
+app.post('/articles',database.controlsBDD,controleIdUser,ArticleController.addManyArticles)
 
 //Création d'un endpoint /article pour la recherche d'un article par name
 app.get('/article',database.controlsBDD,ArticleController.FindOneArticle)

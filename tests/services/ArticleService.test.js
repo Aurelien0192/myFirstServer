@@ -6,6 +6,7 @@ var id_article_valid = ""
 var tab_id_articles = []
 var article_no_valid = {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             price: 12.50,
             quantity:30,
 
@@ -17,6 +18,7 @@ describe("addOneArticle", () => {
     it("article correct. - S", (done) => {
         var article = {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
@@ -60,11 +62,13 @@ describe("addManyArticlesById", () => {
     it("articles à ajouter, non valide. - E", (done) => {
         var articles_tab_error = [{
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
         }, {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
@@ -73,6 +77,7 @@ describe("addManyArticlesById", () => {
         },
         {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
@@ -93,17 +98,20 @@ describe("addManyArticlesById", () => {
     it("articles à ajouter, valide. - S", (done) => {
         var articles_tab = [{
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
         }, {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
         },
         {
             name: "rasoir",
+            user_id : '6683f368c7823c607886b47c',
             description: "coupe aussi bien qu'un chaudron",
             price: 12.50,
             quantity:30,
@@ -177,7 +185,6 @@ describe("findOneArticle", () => {
 describe("findManyArticles", () => {
     it("Retourne 3 articles sur les 5 -S", (done) => {
         ArticleService.findManyArticles(null,1,3, function (err, value){
-            console.log(err, value)
             expect(value).to.haveOwnProperty("count")
             expect(value).to.haveOwnProperty("results")
             expect(value["count"]).to.be.equal(4)

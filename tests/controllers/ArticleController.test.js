@@ -5,6 +5,20 @@ const expect = chai.expect
 const server = require("./../../server")
 const _ = require("lodash")
 
+const UserService = require('../../services/UserService')
+const user = {
+    firstName: "Edouard",
+    lastName: "Dupont",
+    email: "edouard.dupont@gmail.com",
+    username: "edupont"
+}
+
+const userTab= []
+
+UserService.addOneUser(user, function(err, value){
+    userTab.push(value)
+})
+
 let article = []
 let articles = []
 
@@ -16,6 +30,7 @@ describe("POST - /article", () => {
     it("Ajouter un article - S", (done) => {
         chai.request(server).post('/article').send({
             name : "gazon",
+            user_id : userTab[0]._id,
             description : "Le gazon le moins cher de la terre",
             price : 150.47,
             quantity : 841
@@ -28,6 +43,7 @@ describe("POST - /article", () => {
     it("Ajouter article avec champs manquant - E", (done) => {
         chai.request(server).post('/article').send({
             name:"Aventador",
+            user_id : userTab[0]._id,
             decription:"rêve pas tu l'auras jamais",
             quantity:0
         }).end((err,res) => {
@@ -37,12 +53,54 @@ describe("POST - /article", () => {
     })
     it("Ajouter article avec champs vide - E", (done) => {
         chai.request(server).post('/article').send({
-            firstName:"Aventador",
+            name:"Aventador",
+            user_id : userTab[0]._id,
             description:"",
             price:2500000000000,
             quantity:0
         }).end((err,res) => {
             res.should.has.status(405)
+            done()
+        })
+    })
+    it("Ajouter un article avec un user id faux - E", (done) => {
+        chai.request(server).post('/article').send({
+            name:"Aventador",
+            user_id : "6d5sgsfb4ds6b4dfs65b",
+            description:"",
+            price:2500000000000,
+            quantity:0
+
+        }).end((err, res) => {
+            res.should.has.status(405)
+            console.log(res.body)
+            done()
+        })
+    })
+    it("Ajouter un article avec un user id absent - E", (done) => {
+        chai.request(server).post('/article').send({
+            name:"Aventador",
+            description:"",
+            price:2500000000000,
+            quantity:0
+
+        }).end((err, res) => {
+            res.should.has.status(405)
+            console.log(res.body)
+            done()
+        })
+    })
+    it("Ajouter un article avec un user id absent - E", (done) => {
+        chai.request(server).post('/article').send({
+            name:"Aventador",
+            user_id : "6683f368c7823c607886b47c",
+            description:"",
+            price:2500000000000,
+            quantity:0
+
+        }).end((err, res) => {
+            res.should.has.status(404)
+            console.log(res.body)
             done()
         })
     })
@@ -52,11 +110,13 @@ describe("POST - /articles", () => {
     it("Ajouter des articles - S", (done) => {
         chai.request(server).post('/articles').send([{
             name : "gazon premium",
+            user_id : userTab[0]._id,
             description : "Le gazon le plus cher de la terre",
             price : 7,
             quantity : 2
         },{
             name : "vin de bourgogne",
+            user_id : userTab[0]._id,
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -69,10 +129,12 @@ describe("POST - /articles", () => {
     it("Ajouter des articles avec champs manquant - E", (done) => {
         chai.request(server).post('/articles').send([{
             name:"Aventador",
+            user_id : userTab[0]._id,
             decription:"rêve pas tu l'auras jamais",
             quantity:0
         },{
             name : "vin de bourgogne",
+            user_id : userTab[0]._id,
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -84,6 +146,7 @@ describe("POST - /articles", () => {
     it("Ajouter des articles avec champs vide - E", (done) => {
         chai.request(server).post('/articles').send([{
             name : "vin de bourgogne",
+            user_id : userTab[0]._id,
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -94,6 +157,60 @@ describe("POST - /articles", () => {
             quantity:0
         }]).end((err,res) => {
             res.should.has.status(405)
+            done()
+        })
+    })
+    it("Ajouter des articles avec user_id différents - E", (done) => {
+        chai.request(server).post('/articles').send([{
+            name : "gazon premium",
+            user_id : userTab[0]._id,
+            description : "Le gazon le plus cher de la terre",
+            price : 7,
+            quantity : 2
+        },{
+            name : "vin de bourgogne",
+            user_id : '6683f368c7823c607886b47d',
+            description : "super vin du sud de la france",
+            price : 17.96,
+            quantity : 65
+        }]).end ((err, res) => {
+            res.should.have.status(405)
+            done()
+        })
+    })
+    it("Ajouter des articles avec user_id valide mais utilisateurs non existant - E", (done) => {
+        chai.request(server).post('/articles').send([{
+            name : "gazon premium",
+            user_id : "6683f368c7823c607886b47d",
+            description : "Le gazon le plus cher de la terre",
+            price : 7,
+            quantity : 2
+        },{
+            name : "vin de bourgogne",
+            user_id : '6683f368c7823c607886b47d',
+            description : "super vin du sud de la france",
+            price : 17.96,
+            quantity : 65
+        }]).end ((err, res) => {
+            res.should.have.status(404)
+            done()
+        })
+    })
+    it("Ajouter des articles avec user_id invalide - E", (done) => {
+        chai.request(server).post('/articles').send([{
+            name : "gazon premium",
+            user_id : "6683f368c7",
+            description : "Le gazon le plus cher de la terre",
+            price : 7,
+            quantity : 2
+        },{
+            name : "vin de bourgogne",
+            user_id : '6683f368c7',
+            description : "super vin du sud de la france",
+            price : 17.96,
+            quantity : 65
+        }]).end ((err, res) => {
+            res.should.have.status(405)
             done()
         })
     })
@@ -308,9 +425,10 @@ describe("DELETE - /articles", () => {
     it("supprimer des articles corrects - S", (done) => {
         chai.request(server).delete(`/articles`).query({id:[articles[0][0]._id,articles[0][1]._id]}).end((err, res) => {
             res.should.has.status(200)
+            UserService.deleteOneUser(userTab[0]._id, function(err, value){
+            })
             done()
         })
     })
 })
-
 
