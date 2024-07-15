@@ -4,6 +4,9 @@ const async = require('async')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 
+UserSchema.set('toJSON',{virtuals:true})
+UserSchema.set('toObject',{virtuals:true})
+
 var User = mongoose.model('User', UserSchema)
 
 User.createIndexes()
@@ -102,7 +105,7 @@ module.exports.addManyUsers = async function (users, callback) {
 
 module.exports.FindOneUserById = function (user_id, callback) {
     if (user_id && mongoose.isValidObjectId(user_id)) {
-        User.findById(user_id).then((value) => {
+        User.findById(user_id,null, {populate:['articles']}).then((value) => {
             try {
                 if (value) {
                     callback(null, value.toObject());
@@ -128,7 +131,7 @@ module.exports.findOneUser = function (tab_field, value, callback){
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        User.findOne({ $or : obj_find}).then((value) => {
+        User.findOne({ $or : obj_find},null, {populate:['articles']}).then((value) => {
             if (value)
                 callback(null, value.toObject())
             else{
@@ -165,7 +168,7 @@ module.exports.findManyUsers = function (page, limit,q, callback) {
         User.countDocuments(queryMongo).then((value) => {
             if (value > 0){
                 const skip = ((page-1) * limit)
-                User.find(queryMongo, null, {skip:skip, limit:limit,}).then((results) => {
+                User.find(queryMongo, null, {skip:skip, limit:limit, populate:['articles']}).then((results) => {
                     callback (null, {
                         count : value,
                         results : results
@@ -184,7 +187,7 @@ module.exports.findManyUsers = function (page, limit,q, callback) {
 module.exports.findManyUsersById = function (users_id, callback) {
     if (users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == users_id.length) {
         users_id = users_id.map((e) => { return new ObjectId(e) })
-        User.find({ _id: users_id }).then((value) => {
+        User.find({ _id: users_id }, null, {populate:['articles']}).then((value) => {
             try {
                 if (value && Array.isArray(value) &&value.length>0) {
                     callback(null, value);

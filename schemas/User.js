@@ -20,10 +20,16 @@ const UserSchema = mongoose.Schema({
         type: String,
         required : true,
         index : true,
-                unique: true
+        unique: true
 
     },
     phone : String
+})
+
+UserSchema.virtual('articles',{
+    ref:'Article',
+    localField : '_id',
+    foreignField:'user_id'
 })
 
 module.exports = UserSchema
