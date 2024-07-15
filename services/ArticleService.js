@@ -104,7 +104,7 @@ module.exports.addManyArticles = async function (articles, callback) {
 
 module.exports.FindOneArticleById = function (article_id, callback) {
     if (article_id && mongoose.isValidObjectId(article_id)) {
-        Article.findById(article_id).then((value) => {
+        Article.findById(article_id,null, {populate: ['user_id']}).then((value) => {
             try {
                 if (value) {
                     callback(null, value.toObject());
@@ -130,7 +130,7 @@ module.exports.findOneArticle = function (tab_field, value, callback){
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        Article.findOne({ $or : obj_find}).then((value) => {
+        Article.findOne({ $or : obj_find},null, {populate: ['user_id']}).then((value) => {
             if (value)
                 callback(null, value.toObject())
             else{
@@ -167,7 +167,7 @@ module.exports.findManyArticles = function (q,page, limit, callback) {
         Article.countDocuments(queryMongo).then((value) => {
             if (value > 0){
                 const skip = ((page-1) * limit)
-                Article.find(queryMongo, null, {skip:skip, limit:limit,}).then((results) => {
+                Article.find(queryMongo, null, {skip:skip, limit:limit,populate: ['user_id']}).then((results) => {
                     callback (null, {
                         count : value,
                         results : results
@@ -186,7 +186,7 @@ module.exports.findManyArticles = function (q,page, limit, callback) {
 module.exports.findManyArticlesById = function (articles_id, callback) {
     if (articles_id && Array.isArray(articles_id) && articles_id.length > 0 && articles_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == articles_id.length) {
         articles_id = articles_id.map((e) => { return new ObjectId(e) })
-        Article.find({ _id: articles_id }).then((value) => {
+        Article.find({ _id: articles_id },null, {populate: ['user_id']}).then((value) => {
             try {
                 if (value && Array.isArray(value) &&value.length>0) {
                     callback(null, value);

@@ -6,8 +6,8 @@ const ArticleSchema = mongoose.Schema({
         required : true
     },
     user_id: {
-        immutable: true,
         type:mongoose.Types.ObjectId,
+        ref: "User",
         required: true
     },
     description: {
