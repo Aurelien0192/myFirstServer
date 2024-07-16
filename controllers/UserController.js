@@ -47,8 +47,8 @@ module.exports.FindOneUser = function (req, res) {
     if (fields && !Array.isArray(fields)){
         fields = [fields]
     }
-    
-    UserService.findOneUser(fields, req.query.value, null, function(err, value) {
+    const opts = {populate: req.query.populate}
+    UserService.findOneUser(fields, req.query.value, opts, function(err, value) {
         req.log.info("chercher un utilisateur par un champs")
         if (err && err.type_error === "no-found"){
             res.statusCode = 404
@@ -73,7 +73,8 @@ module.exports.FindOneUser = function (req, res) {
 
 // recherche d'un utilisateur
 module.exports.FindOneUserById = function (req,res){
-    UserService.FindOneUserById(req.params.id, null, function(err, value) { 
+    const opts = {populate: req.query.populate}
+    UserService.FindOneUserById(req.params.id, opts, function(err, value) { 
         req.log.info("chercher un utilisateur par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
@@ -92,8 +93,8 @@ module.exports.FindOneUserById = function (req,res){
 }
 
 module.exports.findManyUsers = function (req,res){
-    
-    UserService.findManyUsers(req.query.page, req.query.limit, req.query.q, null, function(err, value){
+    const opts = {populate: req.query.populate}
+    UserService.findManyUsers(req.query.page, req.query.limit, req.query.q, opts, function(err, value){
         req.log.info("chercher tous les utilisateurs avec limit")
         if(err && err.type_error == "no-valid"){
             res.statusCode = 405
@@ -115,7 +116,8 @@ module.exports.findManyUsersById = function (req, res) {
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.findManyUsersById(arg, null, function (err, value) {
+    const opts = {populate: req.query.populate}
+    UserService.findManyUsersById(arg, opts, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);

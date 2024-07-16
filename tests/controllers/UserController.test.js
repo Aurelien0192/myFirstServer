@@ -18,7 +18,8 @@ describe("POST - /user", () => {
             firstName : "Dominique",
             lastName : "US",
             username : "domdom6",
-            email: "diesel6@tatoine.com"
+            email: "diesel6@tatoine.com",
+            password:"1234"
         }).end ((err, res) => {
             res.should.have.status(201)
             user.push(res.body)
@@ -30,7 +31,8 @@ describe("POST - /user", () => {
             firstName : "kiwi",
             lastName : "tit",
             username : "domdom6",
-            email : "gegeo@zeklfjzoe.com"
+            email : "gegeo@zeklfjzoe.com",
+            password:"1234"
         }).end((err,res) => {
             res.should.have.status(405)
             expect(res).to.haveOwnProperty("text")
@@ -41,7 +43,8 @@ describe("POST - /user", () => {
         chai.request(server).post('/user').send({
             firstName:"Aventador",
             username:"Piwiq",
-            email: "gto@onizuka.jp"
+            email: "gto@onizuka.jp",
+            password:"1234"
         }).end((err,res) => {
             res.should.has.status(405)
             done()
@@ -52,7 +55,8 @@ describe("POST - /user", () => {
             firstName:"Aventador",
             lastname:"",
             username:"Piwiq",
-            email: "gto@onizuka.jp"
+            email: "gto@onizuka.jp",
+            password:"1234"
         }).end((err,res) => {
             res.should.has.status(405)
             done()
@@ -66,12 +70,14 @@ describe("POST - /users", () => {
             firstName : "edouard",
             lastName : "Till",
             username : "drfeeezfsqo5",
-            email: "dezoleeefz@tatsqdsqoine.com5"
+            email: "dezoleeefz@tatsqdsqoine.com5",
+            password:"1234"
         },{
             firstName : "caapuce",
             lastName :"Poter",
             username : "kHeeffzeiP5",
-            email : "eee.@poudlard.com5"
+            email : "eee.@poudlard.com5",
+            password:"1234"
         }]).end ((err, res) => {
             res.should.have.status(201)
             users.push(res.body)
@@ -83,12 +89,14 @@ describe("POST - /users", () => {
             firstName : "Mathis",
             lastName : "Boisson",
             username : "drfeeezfsqo5",
-            email: "fekofze"
+            email: "fekofze",
+            password:"1234"
         },{
             firstName : "dracaufeu",
             lastName : "Till",
             username : "drfeeezfsqo5",
-            email : "poketruffe@gmail.com"
+            email : "poketruffe@gmail.com",
+            password:"1234"
         }]).end((err,res) => {
             res.should.have.status(405)
             expect(res).to.haveOwnProperty("text")
@@ -100,11 +108,13 @@ describe("POST - /users", () => {
             firstName : "Mathis",
             lastName : "BOisson",
             username : "footdu21",
-            email: "fe,kofze"
+            email: "fe,kofze",
+            password:"1234"
         },{
             firstName : "dracaufeu",
             username : "baleck",
-            email : "poketruffe@gmail.com"
+            email : "poketruffe@gmail.com",
+            password:"1234"
         }]).end((err,res) => {
             res.should.has.status(405)
             done()
@@ -115,12 +125,14 @@ describe("POST - /users", () => {
             firstName : "Mathis",
             lastName : "BOisson",
             username : "footdu21",
-            email: "fe,kofze"
+            email: "fe,kofze",
+            password:"1234"
         },{
             firstName : "dracaufeu",
             lastname : "",
             username : "baleck",
-            email : "poketruffe@gmail.com"
+            email : "poketruffe@gmail.com",
+            password:"1234"
         }]).end((err,res) => {
             res.should.has.status(405)
             done()

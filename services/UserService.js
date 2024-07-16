@@ -3,6 +3,8 @@ const _ = require('lodash')
 const async = require('async')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
+const bcrypt = require('bcryptjs')
+const SALT_WORK_FACTOR = 10
 
 UserSchema.set('toJSON',{virtuals:true})
 UserSchema.set('toObject',{virtuals:true})
@@ -13,6 +15,10 @@ User.createIndexes()
 
 module.exports.addOneUser = async function (user, options, callback) {
     try {
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+        if(user && user.password)
+            user.password = await bcrypt.hash(user.password, salt)
+
         var new_user = new User(user);
         var errors = new_user.validateSync();
         if (errors) {
@@ -56,6 +62,10 @@ module.exports.addManyUsers = async function (users, options, callback) {
     // Vérifier les erreurs de validation
     for (var i = 0; i < users.length; i++) {
         var user = users[i];
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+        if(user && user.password){
+            user.password = await bcrypt.hash(user.password, salt)
+        }
         var new_user = new User(user);
         var error = new_user.validateSync();
         if (error) {
@@ -218,8 +228,12 @@ module.exports.findManyUsersById = function (users_id, options, callback) {
     }
 }
 
-module.exports.updateOneUser = function (user_id, update, options, callback) {
+module.exports.updateOneUser = async function (user_id, update, options, callback) {
     if (user_id && mongoose.isValidObjectId(user_id)) {  
+        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+        if (update && update.password)
+            update.password = update.password.hash(update.password, salt)
+
         User.findByIdAndUpdate(new ObjectId(user_id), update, { returnDocument: 'after', runValidators: true }).then((value) => {
             try {
                 if (value){
@@ -262,10 +276,13 @@ module.exports.updateOneUser = function (user_id, update, options, callback) {
 }
 
 
-module.exports.updateManyUsers = function (users_id, update, options, callback) {0
+module.exports.updateManyUsers = async function (users_id, update, options, callback) {0
     if(users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == users_id.length){
         if (users_id && Array.isArray(users_id) && users_id.length > 0) {
             users_id = users_id.map((e) => { return new ObjectId(e) })
+            const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
+        if (update && update.password)
+            update.password = await bcrypt.hash(update.password, salt)
             User.updateMany({ _id: users_id }, update, { runValidators: true }).then((value) => {
                 try {
                     if (value && value.modifiedCount !== 0)

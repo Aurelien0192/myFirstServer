@@ -7,7 +7,8 @@ var tab_id_users = []
 var user_no_valid = {
             lastName: "Dupont",
             email: "edouard.dupont@gmail.com",
-            username: "edupont"
+            username: "edupont",
+            password:"1234"
         }
 
 let users = []
@@ -18,7 +19,8 @@ describe("addOneUser", () => {
             firstName: "Edouard",
             lastName: "Dupont",
             email: "edouard.dupont2@gmail.com",
-            username: "edupont2"
+            username: "edupont2",
+            password:"1234"
         }
         UserService.addOneUser(user, null, function (err, value) {
             expect(value).to.be.a('object');
@@ -57,14 +59,16 @@ describe("addManyUsers", () => {
             firstName: "Edouard",
             lastName: "Dupont",
             email: "edouard.dupont@gmail.com",
-            username: "edupont"
+            username: "edupont",
+            password:"1234"
         }, {
             firstName: "Edouard",
             lastName: "Dupont",
             email: "edouard.dupont@gmail.com",
             username: "",
             testing: true,
-            phone: "0645102340"
+            phone: "0645102340",
+            password:"1234"
         },
         {
             firstName: "Edouard",
@@ -72,10 +76,12 @@ describe("addManyUsers", () => {
             email: "edouard.dupont@gmail.com",
             username: "edupont",
             testing: true,
-            phone: "0645102340"
+            phone: "0645102340",
+            password:"1234"
         }, {
             firstName: "Edouard",
-            email: "edouard.dupont@gmail.com"
+            email: "edouard.dupont@gmail.com",
+            password:"1234"
         }]
 
         UserService.addManyUsers(users_tab_error, null, function(err, value) {
@@ -87,14 +93,16 @@ describe("addManyUsers", () => {
             firstName: "Louison",
             lastName: "Dupont",
             email: "lafraise@despres.com",
-            username: "treue"
+            username: "treue",
+            password:"1234"
         }, {
             firstName: "Jordan",
             lastName: "Dupont",
             email: "Element.rush@adaz.fr",
             username: "La",
             testing: true,
-            phone: "0645102340"
+            phone: "0645102340",
+            password:"1234"
         },
         {
             firstName: "Mathis",
@@ -102,7 +110,8 @@ describe("addManyUsers", () => {
             email: "mafezo@zgeoifze.fr",
             username: "lalala",
             testing: true,
-            phone: "0645102340"
+            phone: "0645102340",
+            password:"1234"
         }]
  
         UserService.addManyUsers(users_tab, null, function(err, value) {

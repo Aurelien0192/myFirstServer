@@ -19,17 +19,20 @@ const users = [{
         firstName: "Edouard",
         lastName: "Dupont",
         email: "edouard.dupont@gmail.com",
-        username: "edupont"
+        username: "edupont",
+        password:"1234"
     },{
         firstName: "Angelina",
         lastName: "jolie",
         email: "croft.lara@gmail.com",
-        username: "lcroft"
+        username: "lcroft",
+        password:"1234"
     },{
         firstName: "Farine",
         lastName: "deBlé",
         email: "farineDeBlé@gmail.com",
-        username: "FDB"
+        username: "FDB",
+        password:"1234"
     }
 ]
 
