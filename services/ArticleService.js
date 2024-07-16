@@ -102,12 +102,13 @@ module.exports.addManyArticles = async function (articles, callback) {
     }
 };
 
-module.exports.FindOneArticleById = function (article_id, callback) {
+module.exports.FindOneArticleById = function (article_id, options ,callback) {
+    const opts = {populate: options && options.populate ? ["user_id"]:[], lean:true}
     if (article_id && mongoose.isValidObjectId(article_id)) {
-        Article.findById(article_id,null, {populate: ['user_id']}).then((value) => {
+        Article.findById(article_id, null, opts).then((value) => {
             try {
                 if (value) {
-                    callback(null, value.toObject());
+                    callback(null, value);
                 } else {
                     callback({ msg: "Aucun article trouvé.", type_error: "no-found" });
                 }
@@ -123,16 +124,17 @@ module.exports.FindOneArticleById = function (article_id, callback) {
     }
 }
 
-module.exports.findOneArticle = function (tab_field, value, callback){
+module.exports.findOneArticle = function (tab_field, value, options, callback){
+    const opts = {populate: options && options.populate ? ["user_id"]:[], lean:true}
     const field_unique = ["name"]
     if (tab_field && Array.isArray(tab_field) && value && _.filter(tab_field, (e) => { return field_unique.indexOf(e) === -1}).length === 0){
         let obj_find= []
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        Article.findOne({ $or : obj_find},null, {populate: ['user_id']}).then((value) => {
+        Article.findOne({ $or : obj_find},null, opts).then((value) => {
             if (value)
-                callback(null, value.toObject())
+                callback(null, value)
             else{
                 callback({msg:"article non trouvé", type_error: "no-found"})
             }
@@ -155,7 +157,8 @@ module.exports.findOneArticle = function (tab_field, value, callback){
     }
 }
 
-module.exports.findManyArticles = function (q,page, limit, callback) {
+module.exports.findManyArticles = function (q,page, limit, options, callback) {
+    const populate = options && options.populate ? ["user_id"]:[]
     page = !page ? 1 : page
     limit = !limit ? 1 : limit
     page = !Number.isNaN(page) ? Number(page): page
@@ -167,7 +170,7 @@ module.exports.findManyArticles = function (q,page, limit, callback) {
         Article.countDocuments(queryMongo).then((value) => {
             if (value > 0){
                 const skip = ((page-1) * limit)
-                Article.find(queryMongo, null, {skip:skip, limit:limit,populate: ['user_id']}).then((results) => {
+                Article.find(queryMongo, null, {skip:skip, limit:limit, populate: populate, lean:true}).then((results) => {
                     callback (null, {
                         count : value,
                         results : results
@@ -183,10 +186,11 @@ module.exports.findManyArticles = function (q,page, limit, callback) {
     }
 }
 
-module.exports.findManyArticlesById = function (articles_id, callback) {
+module.exports.findManyArticlesById = function (articles_id,options, callback) {
+    const opts = {populate: (options && options.populate ? ["user_id"]:[]), lean:true}
     if (articles_id && Array.isArray(articles_id) && articles_id.length > 0 && articles_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == articles_id.length) {
         articles_id = articles_id.map((e) => { return new ObjectId(e) })
-        Article.find({ _id: articles_id },null, {populate: ['user_id']}).then((value) => {
+        Article.find({ _id: articles_id },null, opts).then((value) => {
             try {
                 if (value && Array.isArray(value) &&value.length>0) {
                     callback(null, value);
@@ -198,6 +202,7 @@ module.exports.findManyArticlesById = function (articles_id, callback) {
                 
             }
         }).catch((err) => {
+            //console.log(err)
             callback({ msg: "Impossible de chercher l'élément.", type_error: "error-mongo" });
         });
     }

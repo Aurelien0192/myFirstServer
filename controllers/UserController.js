@@ -5,7 +5,7 @@ const UserService = require('../services/UserService')
 module.exports.addOneUser = function (req,res){
     
     req.log.info("Création d'un utilisateur")
-UserService.addOneUser(req.body, function(err, value) {
+UserService.addOneUser(req.body, null,function(err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
             res.send(err)
@@ -25,7 +25,7 @@ UserService.addOneUser(req.body, function(err, value) {
 // ajout de plusieurs utilisateurs
 module.exports.addManyUsers = function (req,res){
     req.log.info("Ajout plusieurs utilisateurs")
-    UserService.addManyUsers(req.body, function(err, value) {
+    UserService.addManyUsers(req.body, null, function(err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404
             res.send(err)
@@ -48,7 +48,7 @@ module.exports.FindOneUser = function (req, res) {
         fields = [fields]
     }
     
-    UserService.findOneUser(fields, req.query.value, function(err, value) {
+    UserService.findOneUser(fields, req.query.value, null, function(err, value) {
         req.log.info("chercher un utilisateur par un champs")
         if (err && err.type_error === "no-found"){
             res.statusCode = 404
@@ -73,7 +73,7 @@ module.exports.FindOneUser = function (req, res) {
 
 // recherche d'un utilisateur
 module.exports.FindOneUserById = function (req,res){
-    UserService.FindOneUserById(req.params.id, function(err, value) { 
+    UserService.FindOneUserById(req.params.id, null, function(err, value) { 
         req.log.info("chercher un utilisateur par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
@@ -93,7 +93,7 @@ module.exports.FindOneUserById = function (req,res){
 
 module.exports.findManyUsers = function (req,res){
     
-    UserService.findManyUsers(req.query.page, req.query.limit, req.query.q, function(err, value){
+    UserService.findManyUsers(req.query.page, req.query.limit, req.query.q, null, function(err, value){
         req.log.info("chercher tous les utilisateurs avec limit")
         if(err && err.type_error == "no-valid"){
             res.statusCode = 405
@@ -115,7 +115,7 @@ module.exports.findManyUsersById = function (req, res) {
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.findManyUsersById(arg, function (err, value) {
+    UserService.findManyUsersById(arg, null, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -138,7 +138,7 @@ module.exports.findManyUsersById = function (req, res) {
 // suppression d'un utilisateur
 module.exports.deleteOneUser = function (req,res){
     req.log.info("supprimer un utilisateur")
-    UserService.deleteOneUser(req.params.id, function (err, value) {
+    UserService.deleteOneUser(req.params.id, null, function (err, value) {
         if(err && err.type_error === "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -161,7 +161,7 @@ module.exports.deleteManyUsers = function (req,res){
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    UserService.deleteManyUsers(arg, function (err, value) {
+    UserService.deleteManyUsers(arg, null, function(err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404;
             res.send(err);
@@ -180,7 +180,7 @@ module.exports.deleteManyUsers = function (req,res){
 // modification d'un utilisateur
 module.exports.updateOneUser = function (req,res){
     req.log.info("modifier un utilisateur")
-    UserService.updateOneUser(req.params.id, req.body, function (err, value) {
+    UserService.updateOneUser(req.params.id, req.body, null, function(err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -207,7 +207,7 @@ module.exports.updateManyUsers = function (req,res){
         arg = [arg]
     }
     var updateData = req.body
-    UserService.updateManyUsers(arg, updateData, function (err, value) {
+    UserService.updateManyUsers(arg, updateData, null, function(err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);

@@ -7,30 +7,65 @@ const _ = require("lodash")
 
 const UserService = require('../../services/UserService')
 const user = {
-    firstName: "Edouard",
-    lastName: "Dupont",
-    email: "edouard.dupont@gmail.com",
-    username: "edupont"
+    firstName: "Edouardzfeefz2",
+    lastName: "Duponfezfez2",
+    email: "edouard.duponfeszeet2@gmail.com",
+    username: "edupontfzezfezeffze2"
 }
 
-const userTab= []
+let tab_id_users = []
 
-UserService.addOneUser(user, function(err, value){
-    userTab.push(value)
-})
+const users = [{
+        firstName: "Edouard",
+        lastName: "Dupont",
+        email: "edouard.dupont@gmail.com",
+        username: "edupont"
+    },{
+        firstName: "Angelina",
+        lastName: "jolie",
+        email: "croft.lara@gmail.com",
+        username: "lcroft"
+    },{
+        firstName: "Farine",
+        lastName: "deBlé",
+        email: "farineDeBlé@gmail.com",
+        username: "FDB"
+    }
+]
+
+function rdmUser(tab_id_users){
+    const index = Math.floor(Math.random() * tab_id_users.length)
+    return tab_id_users[index]
+}
+
 
 let article = []
 let articles = []
 
-
-
 chai.use(chaiHttp)
 
 describe("POST - /article", () => {
+    it("ajout d'utilisateurs - S",(done) => {
+        UserService.addManyUsers(users,null,function(err,value){
+            tab_id_users = _.map(value,'_id')
+            done()
+        })
+    })
+    it("Ajouter article avec champs manquant - E", (done) => {
+        chai.request(server).post('/article').send({
+            name:"Aventador",
+            user_id : rdmUser(tab_id_users),
+            decription:"rêve pas tu l'auras jamais",
+            quantity:0
+        }).end((err,res) => {
+            res.should.has.status(405)
+            done()
+        })
+    })
     it("Ajouter un article - S", (done) => {
         chai.request(server).post('/article').send({
             name : "gazon",
-            user_id : userTab[0]._id,
+            user_id : rdmUser(tab_id_users),
             description : "Le gazon le moins cher de la terre",
             price : 150.47,
             quantity : 841
@@ -39,22 +74,11 @@ describe("POST - /article", () => {
             article.push(res.body)
             done()
         })
-    })
-    it("Ajouter article avec champs manquant - E", (done) => {
-        chai.request(server).post('/article').send({
-            name:"Aventador",
-            user_id : userTab[0]._id,
-            decription:"rêve pas tu l'auras jamais",
-            quantity:0
-        }).end((err,res) => {
-            res.should.has.status(405)
-            done()
-        })
-    })
+    })    
     it("Ajouter article avec champs vide - E", (done) => {
         chai.request(server).post('/article').send({
             name:"Aventador",
-            user_id : userTab[0]._id,
+            user_id : rdmUser(tab_id_users),
             description:"",
             price:2500000000000,
             quantity:0
@@ -73,7 +97,6 @@ describe("POST - /article", () => {
 
         }).end((err, res) => {
             res.should.has.status(405)
-            console.log(res.body)
             done()
         })
     })
@@ -86,11 +109,10 @@ describe("POST - /article", () => {
 
         }).end((err, res) => {
             res.should.has.status(405)
-            console.log(res.body)
             done()
         })
     })
-    it("Ajouter un article avec un user id absent - E", (done) => {
+    it("Ajouter un article avec un user id inexistant - E", (done) => {
         chai.request(server).post('/article').send({
             name:"Aventador",
             user_id : "6683f368c7823c607886b47c",
@@ -100,7 +122,6 @@ describe("POST - /article", () => {
 
         }).end((err, res) => {
             res.should.has.status(404)
-            console.log(res.body)
             done()
         })
     })
@@ -108,15 +129,16 @@ describe("POST - /article", () => {
 
 describe("POST - /articles", () => {
     it("Ajouter des articles - S", (done) => {
+        const user_id = rdmUser(tab_id_users)
         chai.request(server).post('/articles').send([{
             name : "gazon premium",
-            user_id : userTab[0]._id,
+            user_id : user_id,
             description : "Le gazon le plus cher de la terre",
             price : 7,
             quantity : 2
         },{
             name : "vin de bourgogne",
-            user_id : userTab[0]._id,
+            user_id : user_id,
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -127,14 +149,15 @@ describe("POST - /articles", () => {
         })
     })
     it("Ajouter des articles avec champs manquant - E", (done) => {
+        const user_id = rdmUser(tab_id_users)
         chai.request(server).post('/articles').send([{
             name:"Aventador",
-            user_id : userTab[0]._id,
+            user_id : user_id,
             decription:"rêve pas tu l'auras jamais",
             quantity:0
         },{
             name : "vin de bourgogne",
-            user_id : userTab[0]._id,
+            user_id : user_id,
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -146,7 +169,7 @@ describe("POST - /articles", () => {
     it("Ajouter des articles avec champs vide - E", (done) => {
         chai.request(server).post('/articles').send([{
             name : "vin de bourgogne",
-            user_id : userTab[0]._id,
+            user_id : rdmUser(tab_id_users),
             description : "super vin du sud de la france",
             price : 17.96,
             quantity : 65
@@ -163,7 +186,7 @@ describe("POST - /articles", () => {
     it("Ajouter des articles avec user_id différents - E", (done) => {
         chai.request(server).post('/articles').send([{
             name : "gazon premium",
-            user_id : userTab[0]._id,
+            user_id : rdmUser(tab_id_users),
             description : "Le gazon le plus cher de la terre",
             price : 7,
             quantity : 2
@@ -425,8 +448,11 @@ describe("DELETE - /articles", () => {
     it("supprimer des articles corrects - S", (done) => {
         chai.request(server).delete(`/articles`).query({id:[articles[0][0]._id,articles[0][1]._id]}).end((err, res) => {
             res.should.has.status(200)
-            UserService.deleteOneUser(userTab[0]._id, function(err, value){
-            })
+            done()
+        })
+    })
+    it("suppression des utilisateurs by id - S",(done) => {
+        UserService.deleteManyUsers(tab_id_users,null,function(err,value){
             done()
         })
     })

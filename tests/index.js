@@ -4,7 +4,7 @@ describe("UserService", () => {
    require('./services/UserService')
 })
 
-describe("USerController", () => {
+describe("UserController", () => {
     require('./controllers/UserController.test')
 })
 

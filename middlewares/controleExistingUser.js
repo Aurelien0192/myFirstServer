@@ -15,7 +15,7 @@ module.exports.ControleIdUser = (req, res, next) => {
     }
     
 
-    UserService.FindOneUserById(id, function(err,value) {
+    UserService.FindOneUserById(id,null, function(err,value) {
         req.log.info("chercher un utilisateur par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404

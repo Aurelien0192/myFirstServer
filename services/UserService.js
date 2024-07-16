@@ -11,7 +11,7 @@ var User = mongoose.model('User', UserSchema)
 
 User.createIndexes()
 
-module.exports.addOneUser = async function (user, callback) {
+module.exports.addOneUser = async function (user, options, callback) {
     try {
         var new_user = new User(user);
         var errors = new_user.validateSync();
@@ -50,7 +50,7 @@ module.exports.addOneUser = async function (user, callback) {
     }
 };
 
-module.exports.addManyUsers = async function (users, callback) {
+module.exports.addManyUsers = async function (users, options, callback) {
     var errors = [];
     
     // Vérifier les erreurs de validation
@@ -103,12 +103,13 @@ module.exports.addManyUsers = async function (users, callback) {
     }
 };
 
-module.exports.FindOneUserById = function (user_id, callback) {
+module.exports.FindOneUserById = function (user_id, options, callback) {
+    const opts = {populate: options && options.populate ? ["articles"]:[], lean:true}
     if (user_id && mongoose.isValidObjectId(user_id)) {
-        User.findById(user_id,null, {populate:['articles']}).then((value) => {
+        User.findById(user_id, null, opts).then((value) => {
             try {
                 if (value) {
-                    callback(null, value.toObject());
+                    callback(null, value);
                 } else {
                     callback({ msg: "Aucun utilisateur trouvé.", type_error: "no-found" });
                 }
@@ -124,14 +125,15 @@ module.exports.FindOneUserById = function (user_id, callback) {
     }
 }
 
-module.exports.findOneUser = function (tab_field, value, callback){
+module.exports.findOneUser = function (tab_field, value, options, callback){
+    const opts = {populate: options && options.populate ? ["articles"]:[], lean:true}
     const field_unique = ["username", "email"]
     if (tab_field && Array.isArray(tab_field) && value && _.filter(tab_field, (e) => { return field_unique.indexOf(e) === -1}).length === 0){
         let obj_find= []
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        User.findOne({ $or : obj_find},null, {populate:['articles']}).then((value) => {
+        User.findOne({ $or : obj_find},null).then((value) => {
             if (value)
                 callback(null, value.toObject())
             else{
@@ -156,7 +158,8 @@ module.exports.findOneUser = function (tab_field, value, callback){
     }
 }
 
-module.exports.findManyUsers = function (page, limit,q, callback) {
+module.exports.findManyUsers = function (page, limit,q,options, callback){
+    const populate = options && options.populate ? ["articles"]:[]
     page = !page ? 1 : page
     limit = !limit ? 1 : limit
     page = !Number.isNaN(page) ? Number(page): page
@@ -168,7 +171,7 @@ module.exports.findManyUsers = function (page, limit,q, callback) {
         User.countDocuments(queryMongo).then((value) => {
             if (value > 0){
                 const skip = ((page-1) * limit)
-                User.find(queryMongo, null, {skip:skip, limit:limit, populate:['articles']}).then((results) => {
+                User.find(queryMongo, null, {skip:skip, limit:limit, populate:populate,lean:true}).then((results) => {
                     callback (null, {
                         count : value,
                         results : results
@@ -184,10 +187,11 @@ module.exports.findManyUsers = function (page, limit,q, callback) {
     }
 }
 
-module.exports.findManyUsersById = function (users_id, callback) {
+module.exports.findManyUsersById = function (users_id, options, callback) {
+    const opts = {populate: options && options.populate ? ["articles"]:[]}
     if (users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == users_id.length) {
         users_id = users_id.map((e) => { return new ObjectId(e) })
-        User.find({ _id: users_id }, null, {populate:['articles']}).then((value) => {
+        User.find({ _id: users_id }, null, opts).then((value) => {
             try {
                 if (value && Array.isArray(value) &&value.length>0) {
                     callback(null, value);
@@ -214,7 +218,7 @@ module.exports.findManyUsersById = function (users_id, callback) {
     }
 }
 
-module.exports.updateOneUser = function (user_id, update, callback) {
+module.exports.updateOneUser = function (user_id, update, options, callback) {
     if (user_id && mongoose.isValidObjectId(user_id)) {  
         User.findByIdAndUpdate(new ObjectId(user_id), update, { returnDocument: 'after', runValidators: true }).then((value) => {
             try {
@@ -258,7 +262,7 @@ module.exports.updateOneUser = function (user_id, update, callback) {
 }
 
 
-module.exports.updateManyUsers = function (users_id, update, callback) {0
+module.exports.updateManyUsers = function (users_id, update, options, callback) {0
     if(users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e)}).length == users_id.length){
         if (users_id && Array.isArray(users_id) && users_id.length > 0) {
             users_id = users_id.map((e) => { return new ObjectId(e) })
@@ -310,7 +314,7 @@ module.exports.updateManyUsers = function (users_id, update, callback) {0
     }
 }
 
-module.exports.deleteOneUser = function (user_id, callback) {
+module.exports.deleteOneUser = function (user_id, options,callback) {
     if (user_id && mongoose.isValidObjectId(user_id)) {
         
         User.findByIdAndDelete(user_id).then((value) => {
@@ -333,7 +337,7 @@ module.exports.deleteOneUser = function (user_id, callback) {
     }
 }
 
-module.exports.deleteManyUsers = function (users_id, callback) {
+module.exports.deleteManyUsers = function (users_id, options, callback) {
     if (users_id && Array.isArray(users_id) && users_id.length > 0 && users_id.filter((e) => { return mongoose.isValidObjectId(e) }).length == users_id.length) {
         users_id = users_id.map((e) => { return new ObjectId(e) })
         User.deleteMany({ _id: users_id }).then((value) => {

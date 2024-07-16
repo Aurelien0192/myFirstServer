@@ -43,12 +43,13 @@ module.exports.addManyArticles = function (req,res){
 }
 
 module.exports.FindOneArticle = function (req, res) {
+    const opts = {populate: req.query.populate}
     let fields = req.query.fields
     if (fields && !Array.isArray(fields)){
         fields = [fields]
     }
     
-    ArticleService.findOneArticle(fields, req.query.value, function(err, value) {
+    ArticleService.findOneArticle(fields, req.query.value, opts, function(err, value) {
         req.log.info("chercher un article par un champs")
         if (err && err.type_error === "no-found"){
             res.statusCode = 404
@@ -73,7 +74,8 @@ module.exports.FindOneArticle = function (req, res) {
 
 // recherche d'un article
 module.exports.FindOneArticleById = function (req,res){
-    ArticleService.FindOneArticleById(req.params.id, function(err, value) { 
+    const opts = {populate: req.query.populate}
+    ArticleService.FindOneArticleById(req.params.id, opts, function(err, value) { 
         req.log.info("chercher un article par id")
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
@@ -92,8 +94,8 @@ module.exports.FindOneArticleById = function (req,res){
 }
 
 module.exports.findManyArticles = function (req,res){
-    
-    ArticleService.findManyArticles(req.query.q,req.query.page, req.query.limit,function(err, value){
+    const opts = {populate: req.query.populate}
+    ArticleService.findManyArticles(req.query.q,req.query.page, req.query.limit, opts,function(err, value){
         req.log.info("chercher tous les articles avec limit")
         if(err && err.type_error == "no-valid"){
             res.statusCode = 405
@@ -110,12 +112,13 @@ module.exports.findManyArticles = function (req,res){
 }
 // recherche de plusieurs articles
 module.exports.findManyArticlesById = function (req, res) {
+    const opts = {populate: req.query.populate}
     req.log.info("chercher plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    ArticleService.findManyArticlesById(arg, function (err, value) {
+    ArticleService.findManyArticlesById(arg, opts, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);

@@ -193,7 +193,7 @@ describe("GET - /users_by_filter", () => {
         chai.request(server).get('/users_by_filter').query({page:1,limit:3}).end((err, res) => {
             res.should.has.status(200)
             expect(res.body.results).to.be.an('array')
-            expect(res.body.count).to.be.equal(4)
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })
@@ -201,7 +201,7 @@ describe("GET - /users_by_filter", () => {
         chai.request(server).get('/users_by_filter').query({page:3,limit:3}).end((err, res) => {
             res.should.has.status(200)
             expect(res.body.results).to.be.an('array')
-            expect(res.body.count).to.be.equal(4)
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })
@@ -209,7 +209,7 @@ describe("GET - /users_by_filter", () => {
         chai.request(server).get('/users_by_filter').query({limit:3}).end((err, res) => {
             res.should.has.status(200)
             expect(res.body.results).to.be.an('array')
-            expect(res.body.count).to.be.equal(4)
+            expect(res.body.count).to.be.equal(3)
             done()
         })
     })

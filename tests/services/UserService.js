@@ -20,19 +20,17 @@ describe("addOneUser", () => {
             email: "edouard.dupont2@gmail.com",
             username: "edupont2"
         }
-        UserService.addOneUser(user, function (err, value) {
+        UserService.addOneUser(user, null, function (err, value) {
             expect(value).to.be.a('object');
             expect(value).to.haveOwnProperty('_id')
             id_user_valid = value._id
             users.push(value)
-            // 
             id_user_valid = value._id
-            //
             done()
         }) 
     })
     it("Utilisateur incorrect. (Sans firstName) - E", () => {
-        UserService.addOneUser(user_no_valid, function (err, value) {
+        UserService.addOneUser(user_no_valid, null, function (err, value) {
             expect(err).to.haveOwnProperty('msg')
             expect(err).to.haveOwnProperty('fields_with_error').with.lengthOf(1)
             expect(err).to.haveOwnProperty('fields')
@@ -43,7 +41,7 @@ describe("addOneUser", () => {
     })
     it("Utilisateur avec champs en trop- E", () => {
         
-        UserService.addOneUser(user_no_valid, function (err, value) {
+        UserService.addOneUser(user_no_valid, null, function (err, value) {
             expect(err).to.haveOwnProperty('msg')
             expect(err).to.haveOwnProperty('fields_with_error').with.lengthOf(1)
             expect(err).to.haveOwnProperty('fields')
@@ -53,9 +51,7 @@ describe("addOneUser", () => {
     })
 })
 
-
-
-describe("addManyUsersById", () => {
+describe("addManyUsers", () => {
     it("Utilisateurs à ajouter, non valide. - E", (done) => {
         var users_tab_error = [{
             firstName: "Edouard",
@@ -82,7 +78,7 @@ describe("addManyUsersById", () => {
             email: "edouard.dupont@gmail.com"
         }]
 
-        UserService.addManyUsers(users_tab_error, function(err, value) {
+        UserService.addManyUsers(users_tab_error, null, function(err, value) {
             done()
         })
     })
@@ -109,7 +105,7 @@ describe("addManyUsersById", () => {
             phone: "0645102340"
         }]
  
-        UserService.addManyUsers(users_tab, function(err, value) {
+        UserService.addManyUsers(users_tab, null, function(err, value) {
            tab_id_users = _.map(value, '_id')
            users = [...value,...users]
            expect(value).lengthOf(3)
@@ -120,7 +116,7 @@ describe("addManyUsersById", () => {
 
 describe("FindOneUserById", () => {
     it("Chercher un utilisateur existant correct. - S", (done) => {
-        UserService.FindOneUserById(id_user_valid, function (err, value) {
+        UserService.FindOneUserById(id_user_valid, null, function(err, value) {
             expect(value).to.be.a('object');
             expect(value).to.haveOwnProperty('_id')
             expect(value).to.haveOwnProperty('lastName') 
@@ -129,7 +125,7 @@ describe("FindOneUserById", () => {
         })
     })
     it("Chercher un utilisateur non-existant correct. - E", (done) => {
-        UserService.FindOneUserById("100", function (err, value) {
+        UserService.FindOneUserById("100", null, function (err, value) {
             expect(err).to.haveOwnProperty('msg')
             expect(err).to.haveOwnProperty('type_error')
             expect(err["type_error"]).to.equal('no-valid')
@@ -140,7 +136,7 @@ describe("FindOneUserById", () => {
 
 describe("findOneUser", () => {
     it ("Chercher un utilisateur existant correct via username -S", (done) => {
-        UserService.findOneUser(["username"],users[3].username,function (err,value){
+        UserService.findOneUser(["username"],users[3].username, null, function (err,value){
             expect(value).to.be.a("object")
             expect(value).to.haveOwnProperty("username")
             expect(value["username"]).to.equal(users[3].username)
@@ -149,7 +145,7 @@ describe("findOneUser", () => {
         })
     })
     it ("Chercher un utilisateur existant correct via email -S", (done) => {
-        UserService.findOneUser(["email"],users[3].email,function (err,value){
+        UserService.findOneUser(["email"],users[3].email, null, function (err,value){
             expect(value).to.be.a("object")
             expect(value).to.haveOwnProperty("email")
             expect(value["email"]).to.equal(users[3].email)
@@ -158,7 +154,7 @@ describe("findOneUser", () => {
         })
     })
     it ("Chercher un utilisateur existant correct via email et username -S", (done) => {
-        UserService.findOneUser(["username","email"],"edupont",function (err,value){
+        UserService.findOneUser(["username","email"],"edupont2", null, function (err,value){
             expect(value).to.be.a("object")
             expect(value).to.haveOwnProperty("username")
             expect(value["username"]).to.include("dupont")
@@ -167,7 +163,7 @@ describe("findOneUser", () => {
         })
     })
     it ("Chercher un utilisateur avec un champ non autorisé - E", (done) => {
-        UserService.findOneUser(["email", "firstName"],users[0].username, function (err, value){
+        UserService.findOneUser(["email", "firstName"],users[0].username, null, function (err, value){
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.equal("no-valid")
             expect(value).to.be.undefined
@@ -175,7 +171,7 @@ describe("findOneUser", () => {
         })
     })
     it ("Chercher un utilisateur sans talbeau de champs - E", (done) => {
-        UserService.findOneUser("email",users[0].username, function (err, value){
+        UserService.findOneUser("email",users[0].username, null, function (err, value){
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.equal("no-valid")
             expect(value).to.be.undefined
@@ -183,7 +179,7 @@ describe("findOneUser", () => {
         })
     })
     it ("Chercher un utilisateur inexistant - E", (done) => {
-        UserService.findOneUser(["email"],"users[0].username", function (err, value){
+        UserService.findOneUser(["email"],"users[0].username", null, function (err, value){
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.equal("no-found")
             expect(value).to.be.undefined
@@ -194,17 +190,17 @@ describe("findOneUser", () => {
 
 describe("findManyUsers", () => {
     it("Retourne 3 utilisateurs sur les 5 -S", (done) => {
-        UserService.findManyUsers(1,3,"" ,function (err, value){
+        UserService.findManyUsers(1,3,"" , null, function (err, value){
             expect(value).to.haveOwnProperty("count")
             expect(value).to.haveOwnProperty("results")
-            expect(value["count"]).to.be.equal(5)
+            expect(value["count"]).to.be.equal(4)
             expect(value["results"]).lengthOf(3)
             expect(err).to.be.null
             done()
         })
     })
     it("envoie chaine de caractère sur page - E", (done) => {
-        UserService.findManyUsers(null,"coucou", 3, function(err, value){
+        UserService.findManyUsers(null,"coucou", 3, null, function(err, value){
             
             expect(err).to.haveOwnProperty("type_error")
             expect(err["type_error"]).to.be.equal("no-valid")
@@ -216,7 +212,7 @@ describe("findManyUsers", () => {
 
 describe("findManyUsersById", () => {
     it("Chercher des utilisateurs existant correct. - S", (done) => {
-        UserService.findManyUsersById(tab_id_users, function (err, value) {
+        UserService.findManyUsersById(tab_id_users, null, function (err, value) {
             expect(value).lengthOf(3)
             done()
         })
@@ -225,7 +221,7 @@ describe("findManyUsersById", () => {
 
 describe("updateOneUser", () => {
     it("Modifier un utilisateur avec id correct - S", (done) => {
-        UserService.updateOneUser(id_user_valid, {firstName : "tonton", lastName : "richard"}, function(err, value) {
+        UserService.updateOneUser(id_user_valid, {firstName : "tonton", lastName : "richard"}, null, function(err, value) {
             expect(err).is.null
             expect(value).is.a('object')
             expect(value).to.haveOwnProperty('_id')
@@ -235,7 +231,7 @@ describe("updateOneUser", () => {
         })  
     })
     it("Modification utilisateur avec id incorrect - E", (done) => {
-        UserService.updateOneUser("100",{firstName : "tonton", lastName : "richard"},function (err, value){
+        UserService.updateOneUser("100",{firstName : "tonton", lastName : "richard"}, null, function (err, value){
             expect(err).to.be.a("object")
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("type_error")
@@ -244,7 +240,7 @@ describe("updateOneUser", () => {
         })
     })
     it("Modification utilisateur avec champs requis vide - E", (done) => {
-        UserService.addOneUser(user_no_valid, function (err, value) {
+        UserService.addOneUser(user_no_valid, null, function (err, value) {
             expect(err).to.haveOwnProperty('msg')
             expect(err).to.haveOwnProperty('fields_with_error').with.lengthOf(1)
             expect(err).to.haveOwnProperty('fields')
@@ -257,8 +253,7 @@ describe("updateOneUser", () => {
 
 describe("updateManyUsers", () => {
     it("Modification utilisateurs avec id conformes - S", (done) =>{
-        UserService.updateManyUsers(tab_id_users,{firstName:"Boudha"}, function (err, value){
-            
+        UserService.updateManyUsers(tab_id_users,{firstName:"Boudha"}, null, function (err, value){
             expect(err).to.be.null
             expect(value).to.haveOwnProperty("modifiedCount")
             expect(value).to.haveOwnProperty("matchedCount")
@@ -268,7 +263,7 @@ describe("updateManyUsers", () => {
         })
     })
     it("Modification utilisateurs avec champs requis vide - E", (done) => {
-        UserService.updateManyUsers(tab_id_users,{firstName:""}, function (err, value){
+        UserService.updateManyUsers(tab_id_users,{firstName:""}, null, function (err, value){
             expect(value).to.be.undefined
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("fields_with_error").with.lengthOf(1)
@@ -282,14 +277,14 @@ describe("updateManyUsers", () => {
 
 describe('deleteOneUser', () => {
     it('suppression un utilisateur id valide - S', (done) => {
-        UserService.deleteOneUser(id_user_valid, function(err, value){
+        UserService.deleteOneUser(id_user_valid, null, function(err, value){
             expect(value).to.be.a('object')
             expect(value).to.haveOwnProperty("_id")
             done()
         })
     })
     it('suppression un utilisateur id invalide - E', (done) => {
-        UserService.deleteOneUser("100", function(err, value){
+        UserService.deleteOneUser("100", null, function(err, value){
             expect(value).to.be.undefined
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("type_error")
@@ -298,7 +293,7 @@ describe('deleteOneUser', () => {
         })
     })
         it('suppression un utilisateur id inexistant - E', (done) => {
-        UserService.deleteOneUser("665ee29270f158326232d893", function(err, value){
+        UserService.deleteOneUser("665ee29270f158326232d893", null, function(err, value){
             expect(value).to.be.undefined
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("type_error")
@@ -310,7 +305,7 @@ describe('deleteOneUser', () => {
 
 describe('deleteManyUsers', () => {
     it("supression d'utilisateur avec ID valide - S", (done) => {
-        UserService.deleteManyUsers(tab_id_users, function(err, value){
+        UserService.deleteManyUsers(tab_id_users, null, function(err, value){
             expect(err).to.be.null
             expect(value).to.haveOwnProperty("deletedCount")
             expect(value["deletedCount"]).to.equal(tab_id_users.length)
@@ -318,8 +313,7 @@ describe('deleteManyUsers', () => {
         })
     })
     it("supression d'utilisateur avec ID non valide - E", (done) => {
-        UserService.deleteManyUsers(["100","200","300"], function(err, value){
-            
+        UserService.deleteManyUsers(["100","200","300"], null, function(err, value){
             expect(value).to.be.undefined
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("type_error")
@@ -328,7 +322,7 @@ describe('deleteManyUsers', () => {
         })
     })
     it("supression d'utilisateur avec ID manquant - E", (done) => {
-        UserService.deleteManyUsers([], function(err, value){
+        UserService.deleteManyUsers([], null, function(err, value){
             expect(value).to.be.undefined
             expect(err).to.haveOwnProperty("msg")
             expect(err).to.haveOwnProperty("type_error")
