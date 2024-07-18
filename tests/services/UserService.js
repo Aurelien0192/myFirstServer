@@ -53,6 +53,31 @@ describe("addOneUser", () => {
     })
 })
 
+describe("loginUser",() => {
+    it("Login avec données corrects - S",(done) => {
+        UserService.loginUser("edupont2","1234",null,(err, value) => {
+            expect(value).to.haveOwnProperty("token")
+            expect(value).to.haveOwnProperty("username")
+            expect(value['username']).to.be.equal('edupont2')
+            done()
+        })
+    })
+    it("Login avec mot de passe faux - S",(done) => {
+        UserService.loginUser("edupont2","12345",null,(err, value) => {
+            expect(err).to.haveOwnProperty('type_error')
+            expect(err['type_error']).to.be.equal('no-comparaison')
+            done()
+        })
+    })
+    it("Login avec username faux - S",(done) => {
+        UserService.loginUser("edup2","1234",null,(err, value) => {
+            expect(err).to.haveOwnProperty('type_error')
+            expect(err['type_error']).to.be.equal('no-found')
+            done()
+        })
+    })
+})
+
 describe("addManyUsers", () => {
     it("Utilisateurs à ajouter, non valide. - E", (done) => {
         var users_tab_error = [{

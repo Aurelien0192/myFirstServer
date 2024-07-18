@@ -6,6 +6,7 @@ const passport = require('passport')
 module.exports.loginUser = function(req, res, next){
     passport.authenticate('login', {badRequestMessage: "Les champs sont manquants."}, async function (err, user){
         if(err){
+            res.statusCode=401
             return res.send({msg: "Le nom d'utilisateur ou mot de passe n'est pas correct", type_error:"no-valid-login"})
         }else{
             req.logIn(user, async function(err){

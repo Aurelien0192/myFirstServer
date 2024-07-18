@@ -159,9 +159,9 @@ module.exports.findOneUser = function (tab_field, value, options, callback){
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        User.findOne({ $or : obj_find}).then((value) => {
+        User.findOne({ $or : obj_find},null, opts).then((value) => {
             if (value)
-                callback(null, value.toObject())
+                callback(null, value)
             else{
                 callback({msg:"utilisateur non trouvé", type_error: "no-found"})
             }
@@ -273,7 +273,6 @@ module.exports.updateOneUser = async function (user_id, update, options, callbac
                 };
                 callback(err);
             }else{
-                console.log(errors)
                 errors = errors['errors']
                 var text = Object.keys(errors).map((e) => {
                     return errors[e]['properties']['message']
