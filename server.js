@@ -5,6 +5,7 @@ const Config = require("./config")
 const Logger = require("./utils/logger").pino
 const database = require("./middlewares/database")
 const loggerHttp = require("./middlewares/loggerHttp")
+const session = require('express-session')
 
 //Création de notre application express.js
 const app = express()
@@ -13,6 +14,21 @@ const app = express()
 
 require("./utils/database")
 
+//Ajout du module de login
+
+const passport = require("./utils/passport")
+//passport init
+
+app.use(session({
+    secret : Config.secret_cookie,
+    resave: false,
+    saveUninitialized : true,
+    cookie: {secure: true}
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 //déclaration des controlleurs pour utilisateur
 const UserController = require("./controllers/UserController")
 const ArticleController = require("./controllers/ArticleController")
@@ -20,8 +36,11 @@ const controleIdUser = require("./middlewares/controleExistingUser").ControleIdU
 const { config } = require("chai")
 
 app.use(bodyParser.json(), loggerHttp.addLogger)
-//Création dun endpoint /user pour l'ajout d'un utilisateur
 
+//Création du endpoint /login pour connecter un utilisateur
+app.post('/login', database.controlsBDD, UserController.loginUser)
+
+//Création dun endpoint /user pour l'ajout d'un utilisateur
 app.post('/user',database.controlsBDD,UserController.addOneUser)
 
 //Création dun endpoint /user pour l'ajout de plusieurs utilisateurs
@@ -33,7 +52,7 @@ app.get('/user',database.controlsBDD,UserController.FindOneUser)
 //Création dun endpoint /user pour la recherche d'un utilisateur par id
 app.get('/user/:id',database.controlsBDD, UserController.FindOneUserById)
 
-app.get('/users_by_filter',database.controlsBDD, UserController.findManyUsers)
+app.get('/users_by_filter',database.controlsBDD, passport.authenticate('jwt',{session:false}), UserController.findManyUsers)
 
 //Création dun endpoint /users pour la recherche de plusieurs utilisateurs
 app.get('/users',database.controlsBDD, UserController.findManyUsersById)

@@ -4,6 +4,7 @@ const async = require('async')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Types.ObjectId
 const bcrypt = require('bcryptjs')
+const TokenUtils = require('./../utils/token')
 const SALT_WORK_FACTOR = 10
 
 UserSchema.set('toJSON',{virtuals:true})
@@ -12,6 +13,21 @@ UserSchema.set('toObject',{virtuals:true})
 var User = mongoose.model('User', UserSchema)
 
 User.createIndexes()
+
+module.exports.loginUser = async function(username, password, options, callback){
+    module.exports.findOneUser(['username','email'], username, null, async (err, value) => {
+        if(err){
+            callback(err)
+        }else{
+            if(bcrypt.compareSync(password, value.password)){ //comparaison hash password et password fourni lors de la co
+                let token = TokenUtils.createToken({_id : value._id}, null) //création du token via jsonwebtoken en fournissant l'id utilisateur
+                callback(null, {...value, token:token}) //return l'utilisateur avec le token
+            }else{
+                callback({msg: "La comparaison des mots de passe sont fausse",type_error:"no-comparaison"})
+            }
+        }
+    })
+}
 
 module.exports.addOneUser = async function (user, options, callback) {
     try {
@@ -143,7 +159,7 @@ module.exports.findOneUser = function (tab_field, value, options, callback){
         _.forEach(tab_field, (e) => {
             obj_find.push({ [e] : value})
         })
-        User.findOne({ $or : obj_find},null).then((value) => {
+        User.findOne({ $or : obj_find}).then((value) => {
             if (value)
                 callback(null, value.toObject())
             else{
@@ -156,6 +172,9 @@ module.exports.findOneUser = function (tab_field, value, options, callback){
         let msg = ""
         if(!tab_field || !Array.isArray(tab_field)){
             msg += "Les champs de recherche sont incorrecte"
+        }
+        if(!value){
+            msg +=msg ?" et la valeur de recherche est vide":"La valeur de recherche est vide"
         }
         if (_.filter(tab_field, (e) => {return field_unique.indexOf(e) === -1}).length>0){
             const field_not_authorized = _.filter(tab_field, (e) => {return field_unique.indexOf(e) === -1})
@@ -232,7 +251,7 @@ module.exports.updateOneUser = async function (user_id, update, options, callbac
     if (user_id && mongoose.isValidObjectId(user_id)) {  
         const salt = await bcrypt.genSalt(SALT_WORK_FACTOR)
         if (update && update.password)
-            update.password = update.password.hash(update.password, salt)
+            update.password = await bcrypt.hash(update.password, salt)
 
         User.findByIdAndUpdate(new ObjectId(user_id), update, { returnDocument: 'after', runValidators: true }).then((value) => {
             try {
@@ -254,6 +273,7 @@ module.exports.updateOneUser = async function (user_id, update, options, callbac
                 };
                 callback(err);
             }else{
+                console.log(errors)
                 errors = errors['errors']
                 var text = Object.keys(errors).map((e) => {
                     return errors[e]['properties']['message']

@@ -1,5 +1,24 @@
 const UserService = require('../services/UserService')
+const LoggerHttp = require('../utils/logger').http
+const passport = require('passport')
 
+//La fonction pour gerer l'authentification depuis passport
+module.exports.loginUser = function(req, res, next){
+    passport.authenticate('login', {badRequestMessage: "Les champs sont manquants."}, async function (err, user){
+        if(err){
+            return res.send({msg: "Le nom d'utilisateur ou mot de passe n'est pas correct", type_error:"no-valid-login"})
+        }else{
+            req.logIn(user, async function(err){
+                if (err) {
+                    res.statusCode=500
+                    return res.send({msg:"Problème d'authentification sur le serveur", type_error:"internal"})
+                }else{
+                    return res.send(user)
+                }
+            })
+        }
+    })(req,res,next)
+}
 
 // ajout d'un utilisateur
 module.exports.addOneUser = function (req,res){
@@ -43,12 +62,14 @@ module.exports.addManyUsers = function (req,res){
 }
 
 module.exports.FindOneUser = function (req, res) {
+    LoggerHttp(req, res)
+
     let fields = req.query.fields
     if (fields && !Array.isArray(fields)){
         fields = [fields]
     }
     const opts = {populate: req.query.populate}
-    UserService.findOneUser(fields, req.query.value, opts, function(err, value) {
+    UserService.findOneUser(fields, req.query.value, null, function(err, value) {
         req.log.info("chercher un utilisateur par un champs")
         if (err && err.type_error === "no-found"){
             res.statusCode = 404
