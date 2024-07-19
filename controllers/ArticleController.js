@@ -3,9 +3,9 @@ const ArticleService = require('../services/ArticleService')
 
 // ajout d'un article
 module.exports.addOneArticle = function (req,res){
-    
+    const opts = {user : req.user}
     req.log.info("Création d'un article")
-ArticleService.addOneArticle(req.body, function(err, value) {
+ArticleService.addOneArticle(req.body, opts, function(err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404
             res.send(err)
@@ -24,8 +24,9 @@ ArticleService.addOneArticle(req.body, function(err, value) {
 
 // ajout de plusieurs articles
 module.exports.addManyArticles = function (req,res){
+    const opts = {user : req.user}
     req.log.info("Ajout plusieurs articles")
-    ArticleService.addManyArticles(req.body, function(err, value) {
+    ArticleService.addManyArticles(req.body, opts, function(err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404
             res.send(err)
@@ -43,7 +44,7 @@ module.exports.addManyArticles = function (req,res){
 }
 
 module.exports.FindOneArticle = function (req, res) {
-    const opts = {populate: req.query.populate}
+    const opts = {populate: req.query.populate, user: req.user}
     let fields = req.query.fields
     if (fields && !Array.isArray(fields)){
         fields = [fields]
@@ -74,7 +75,7 @@ module.exports.FindOneArticle = function (req, res) {
 
 // recherche d'un article
 module.exports.FindOneArticleById = function (req,res){
-    const opts = {populate: req.query.populate}
+    const opts = {populate: req.query.populate, user: req.user}
     ArticleService.FindOneArticleById(req.params.id, opts, function(err, value) { 
         req.log.info("chercher un article par id")
         if(err && err.type_error == "no-found") {
@@ -94,7 +95,7 @@ module.exports.FindOneArticleById = function (req,res){
 }
 
 module.exports.findManyArticles = function (req,res){
-    const opts = {populate: req.query.populate}
+    const opts = {populate: req.query.populate, user: req.user}
     ArticleService.findManyArticles(req.query.q,req.query.page, req.query.limit, opts,function(err, value){
         req.log.info("chercher tous les articles avec limit")
         if(err && err.type_error == "no-valid"){
@@ -112,7 +113,7 @@ module.exports.findManyArticles = function (req,res){
 }
 // recherche de plusieurs articles
 module.exports.findManyArticlesById = function (req, res) {
-    const opts = {populate: req.query.populate}
+    const opts = {populate: req.query.populate, user: req.user}
     req.log.info("chercher plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
@@ -140,8 +141,9 @@ module.exports.findManyArticlesById = function (req, res) {
 
 // suppression d'un article
 module.exports.deleteOneArticle = function (req,res){
+    const opts = {user: req.user}
     req.log.info("supprimer un article")
-    ArticleService.deleteOneArticle(req.params.id, function (err, value) {
+    ArticleService.deleteOneArticle(req.params.id, opts, function (err, value) {
         if(err && err.type_error === "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -159,12 +161,13 @@ module.exports.deleteOneArticle = function (req,res){
 }
 // suppression de plusieurs articles
 module.exports.deleteManyArticles = function (req,res){
+    const opts = {user: req.user}
     req.log.info("supprimer plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
-    ArticleService.deleteManyArticles(arg, function (err, value) {
+    ArticleService.deleteManyArticles(arg,opts , function (err, value) {
         if(err && err.type_error == "no-found"){
             res.statusCode = 404;
             res.send(err);
@@ -182,8 +185,9 @@ module.exports.deleteManyArticles = function (req,res){
 }
 // modification d'un article
 module.exports.updateOneArticle = function (req,res){
+    const opts = {user: req.user}
     req.log.info("modifier un article")
-    ArticleService.updateOneArticle(req.params.id, req.body, function (err, value) {
+    ArticleService.updateOneArticle(req.params.id, req.body, opts, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
@@ -204,13 +208,14 @@ module.exports.updateOneArticle = function (req,res){
 }
 // modification de plusieurs articles
 module.exports.updateManyArticles = function (req,res){
+    const opts = {user: req.user}
     req.log.info("modifier plusieurs articles")
     let arg = req.query.id
     if (arg && !Array.isArray(arg)){
         arg = [arg]
     }
     var updateData = req.body
-    ArticleService.updateManyArticles(arg, updateData, function (err, value) {
+    ArticleService.updateManyArticles(arg, updateData, opts, function (err, value) {
         if(err && err.type_error == "no-found") {
             res.statusCode = 404;
             res.send(err);
